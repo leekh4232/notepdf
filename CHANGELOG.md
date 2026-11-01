@@ -4,6 +4,11 @@
 
 형식은 [Keep a Changelog](https://keepachangelog.com/ko/1.1.0/)를, 버전은 [유의적 버전](https://semver.org/lang/ko/)을 따릅니다.
 
+## [0.12.1] - 2026-11-01
+
+### 변경
+- Marketplace 배포 방식만 바꿨습니다. 확장의 기능과 설정은 0.12.0과 같습니다.
+
 ## [0.12.0] - 2026-11-01
 
 ### 추가
