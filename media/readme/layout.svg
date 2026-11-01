@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="330" viewBox="0 0 920 330" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,'Apple SD Gothic Neo','Malgun Gothic','Noto Sans KR',sans-serif">
+  <!-- README: the three page layouts the note area commands produce, as pdf2note.py draws them. -->
+  <rect x="0.5" y="0.5" width="919" height="329" rx="14" fill="#ffffff" stroke="#d0d7de"/>
+
+  <!-- A: landscape source -> portrait page -->
+  <text x="160" y="32" text-anchor="middle" font-size="14" font-weight="700" fill="#24292f">가로 원본 → 세로 페이지</text>
+  <g transform="translate(85 48)">
+    <rect x="0" y="0" width="150" height="212" rx="3" fill="#ffffff" stroke="#b6bec9"/>
+    <text x="8" y="12" font-size="6" fill="#8c96a8">{file}</text>
+    <text x="142" y="206" text-anchor="end" font-size="6" fill="#8c96a8">{page} / {total}</text>
+    <rect x="14" y="22" width="122" height="86" fill="#ffffff" stroke="#cfcfcf" stroke-width="1"/>
+    <rect x="22" y="32" width="46" height="5" rx="2" fill="#24292f"/>
+    <rect x="22" y="42" width="100" height="3" rx="1.5" fill="#c7cdd8"/>
+    <rect x="22" y="49" width="88" height="3" rx="1.5" fill="#c7cdd8"/>
+    <rect x="22" y="58" width="104" height="24" rx="3" fill="#1d222a"/>
+    <rect x="28" y="64" width="14" height="3" rx="1.5" fill="#c678dd"/>
+    <rect x="46" y="64" width="30" height="3" rx="1.5" fill="#c0c6d3"/>
+    <rect x="28" y="72" width="40" height="3" rx="1.5" fill="#98c379"/>
+    <rect x="22" y="88" width="80" height="3" rx="1.5" fill="#c7cdd8"/>
+    <rect x="22" y="95" width="60" height="3" rx="1.5" fill="#c7cdd8"/>
+    <g stroke="#b9b9b9" stroke-width="1" stroke-dasharray="3 3" stroke-linecap="round">
+      <line x1="14" y1="126" x2="136" y2="126"/>
+      <line x1="14" y1="140" x2="136" y2="140"/>
+      <line x1="14" y1="154" x2="136" y2="154"/>
+      <line x1="14" y1="168" x2="136" y2="168"/>
+      <line x1="14" y1="182" x2="136" y2="182"/>
+      <line x1="14" y1="196" x2="136" y2="196"/>
+    </g>
+  </g>
+  <text x="160" y="288" text-anchor="middle" font-size="12" fill="#57606a">원본은 위, 줄노트는 아래 · 원본에 얇은 테두리</text>
+  <text x="160" y="306" text-anchor="middle" font-size="12" fill="#57606a">여백 24 pt · 머릿말 왼쪽 · 꼬릿말 오른쪽</text>
+
+  <!-- B: portrait source -> landscape page -->
+  <text x="460" y="32" text-anchor="middle" font-size="14" font-weight="700" fill="#24292f">세로 원본 → 가로 페이지</text>
+  <g transform="translate(354 79)">
+    <rect x="0" y="0" width="212" height="150" rx="3" fill="#ffffff" stroke="#b6bec9"/>
+    <text x="8" y="11" font-size="6" fill="#8c96a8">{file}</text>
+    <text x="204" y="144" text-anchor="end" font-size="6" fill="#8c96a8">{page} / {total}</text>
+    <rect x="0" y="16" width="106" height="118" fill="#ffffff"/>
+    <rect x="12" y="28" width="40" height="5" rx="2" fill="#24292f"/>
+    <rect x="12" y="38" width="80" height="3" rx="1.5" fill="#c7cdd8"/>
+    <rect x="12" y="45" width="68" height="3" rx="1.5" fill="#c7cdd8"/>
+    <rect x="12" y="54" width="82" height="26" rx="3" fill="#1d222a"/>
+    <rect x="18" y="60" width="14" height="3" rx="1.5" fill="#c678dd"/>
+    <rect x="36" y="60" width="30" height="3" rx="1.5" fill="#c0c6d3"/>
+    <rect x="18" y="68" width="40" height="3" rx="1.5" fill="#98c379"/>
+    <rect x="12" y="88" width="82" height="22" fill="#f6f8fa"/>
+    <rect x="12" y="88" width="2" height="22" fill="#3f54b5"/>
+    <rect x="19" y="94" width="50" height="2.5" rx="1" fill="#9aa6c2"/>
+    <rect x="19" y="101" width="64" height="2.5" rx="1" fill="#9aa6c2"/>
+    <rect x="12" y="118" width="70" height="3" rx="1.5" fill="#c7cdd8"/>
+    <rect x="12" y="125" width="54" height="3" rx="1.5" fill="#c7cdd8"/>
+    <g stroke="#b9b9b9" stroke-width="1" stroke-dasharray="3 3" stroke-linecap="round">
+      <line x1="118" y1="34" x2="204" y2="34"/>
+      <line x1="118" y1="48" x2="204" y2="48"/>
+      <line x1="118" y1="62" x2="204" y2="62"/>
+      <line x1="118" y1="76" x2="204" y2="76"/>
+      <line x1="118" y1="90" x2="204" y2="90"/>
+      <line x1="118" y1="104" x2="204" y2="104"/>
+      <line x1="118" y1="118" x2="204" y2="118"/>
+    </g>
+  </g>
+  <text x="460" y="288" text-anchor="middle" font-size="12" fill="#57606a">원본은 왼쪽, 줄노트는 오른쪽 · 여백 없음</text>
+  <text x="460" y="306" text-anchor="middle" font-size="12" fill="#57606a">/Rotate 스캔 페이지는 화면에 보이는 방향대로</text>
+
+  <!-- C: feedback mode (landscape source) -->
+  <text x="760" y="32" text-anchor="middle" font-size="14" font-weight="700" fill="#24292f">피드백 모드 <tspan font-size="11" font-weight="400" fill="#e08a1e">layoutMode: feedback</tspan></text>
+  <g transform="translate(685 48)">
+    <rect x="0" y="0" width="150" height="212" rx="3" fill="#ffffff" stroke="#b6bec9"/>
+    <text x="8" y="12" font-size="6" fill="#8c96a8">{file}</text>
+    <text x="142" y="206" text-anchor="end" font-size="6" fill="#8c96a8">{page} / {total}</text>
+    <rect x="14" y="22" width="122" height="86" fill="#ffffff" stroke="#cfcfcf" stroke-width="1"/>
+    <rect x="22" y="32" width="46" height="5" rx="2" fill="#24292f"/>
+    <rect x="22" y="42" width="100" height="3" rx="1.5" fill="#c7cdd8"/>
+    <rect x="22" y="49" width="88" height="3" rx="1.5" fill="#c7cdd8"/>
+    <rect x="22" y="58" width="104" height="24" rx="3" fill="#1d222a"/>
+    <rect x="28" y="64" width="14" height="3" rx="1.5" fill="#c678dd"/>
+    <rect x="46" y="64" width="30" height="3" rx="1.5" fill="#c0c6d3"/>
+    <rect x="28" y="72" width="40" height="3" rx="1.5" fill="#98c379"/>
+    <rect x="22" y="88" width="80" height="3" rx="1.5" fill="#c7cdd8"/>
+    <rect x="22" y="95" width="60" height="3" rx="1.5" fill="#c7cdd8"/>
+    <rect x="14" y="118" width="122" height="22" rx="2" fill="#fdf3e0" stroke="#f0d9a8" stroke-width="0.8"/>
+    <text x="75" y="132" text-anchor="middle" font-size="7" font-weight="700" fill="#e08a1e">feedbackBannerImage</text>
+    <g stroke="#b9b9b9" stroke-width="1" stroke-dasharray="3 3" stroke-linecap="round">
+      <line x1="14" y1="162" x2="136" y2="162"/>
+      <line x1="14" y1="176" x2="136" y2="176"/>
+      <line x1="14" y1="190" x2="136" y2="190"/>
+    </g>
+    <line x1="75" y1="150" x2="75" y2="198" stroke="#bfbfbf" stroke-width="1"/>
+  </g>
+  <text x="760" y="288" text-anchor="middle" font-size="12" fill="#57606a">원본 아래 배너 이미지 · 가운데 분리선</text>
+  <text x="760" y="306" text-anchor="middle" font-size="12" fill="#57606a">필기 영역을 좌우로 나눔 · 가로 원본에서만</text>
+</svg>

@@ -1,6 +1,6 @@
-# Ipynb PDF Converter 작업 지침
+# NotePDF 작업 지침
 
-VS Code 확장 **Ipynb PDF Converter**(`leekh.ipynb-pdf-converter`) 저장소입니다. `.ipynb` · `.md`를 웹뷰에서 렌더링해 페이지 그림으로 캡처하고, pdf-lib로 투명 텍스트 층을 얹어 PDF를 만듭니다. 형제 프로젝트 **PDF2Note**(`/Users/leekh/pdf2note`)가 이 확장의 API `convertToPdfBytes`를 씁니다.
+VS Code 확장 **NotePDF**(`leekh.ipynb-pdf-converter`, 예전 이름 Ipynb PDF Converter) 저장소입니다. `.ipynb` · `.md`를 웹뷰에서 렌더링해 페이지 그림으로 캡처하고, pdf-lib로 투명 텍스트 층을 얹어 PDF를 만듭니다. **필기 영역 추가** 명령은 PDF(또는 먼저 변환한 `.ipynb` · `.md`)의 페이지마다 줄노트 필기 영역을 붙입니다. 이 기능은 예전 별도 확장 PDF2Note를 합친 것입니다(`src/note.ts` · `src/notes.ts`). 확장 ID와 설정 이름 `ipynb-pdf-converter.*`는 바꾸지 않습니다.
 
 응답과 문서는 한글로 씁니다. 코드, 커밋 메시지, 설정 이름은 원래 언어를 유지합니다.
 
@@ -56,8 +56,9 @@ code --install-extension ipynb-pdf-converter-local.vsix --force
   - `.ipynb`와 `.md`가 PDF로 변환되고 모양이 이전과 같다.
   - PDF에서 글자를 드래그해 복사할 수 있고 검색이 된다 (텍스트 층).
   - 비밀번호 명령으로 만든 PDF가 그 비밀번호로만 열린다.
-  - PDF2Note로 `.ipynb`에 필기 영역을 붙여도 텍스트가 남는다 (API를 건드렸다면 필수).
-- 직접 클릭할 수 없을 때는 `@vscode/test-electron`으로 별도 VS Code를 내려받아 확장을 띄우고, 테스트 스크립트에서 API나 명령을 호출한 뒤 결과 PDF를 검사합니다. 텍스트는 PyMuPDF(`fitz`)로 `page.get_text()`와 `page.search_for()`로 확인합니다. 이때 함정이 세 가지 있습니다.
+  - 필기 영역 추가: 가로 원본 PDF와 세로 원본 PDF에 필기 영역이 맞게 붙고, `.ipynb` · `.md` 입력의 텍스트가 결과에 남는다. 비밀번호가 걸린 원본도 열린다.
+  - 피드백 모드(`note.layoutMode: feedback`)에서 배너와 분리선이 나온다 (레이아웃을 건드렸다면 필수).
+- 직접 클릭할 수 없을 때는 `@vscode/test-electron`으로 별도 VS Code를 내려받아 확장을 띄우고, 테스트 스크립트에서 명령을 파일 URI로 호출한 뒤(여러 파일은 `(클릭한 Uri, 선택한 Uri[])`) 결과 PDF를 검사합니다. 텍스트는 PyMuPDF(`fitz`)로 `page.get_text()`와 `page.search_for()`로 확인합니다. 이때 함정이 세 가지 있습니다.
   - VS Code 터미널에서 실행하면 `ELECTRON_RUN_AS_NODE`가 설정돼 있어 Node로 뜹니다. `env -u ELECTRON_RUN_AS_NODE`로 실행합니다.
   - 최신 VS Code는 실행 파일이 `Contents/MacOS/Code`라서 `vscodeExecutablePath`를 직접 지정해야 합니다.
   - `--user-data-dir` 경로가 길면 소켓 경로 제한(macOS 104자)에 걸립니다. 짧은 경로를 씁니다.
@@ -79,4 +80,5 @@ git add -A && git commit -m "<type>: <요약>" && git push origin main
 
 - 빌드: `npm run vendor`(테마 CSS · html2canvas 복사) → `npm run build`(esbuild로 `out/extension.js` 하나로 묶음). `vscode:prepublish`가 둘 다 실행합니다.
 - 텍스트 층용 한글 글꼴은 `media/fonts/NanumGothic.ttf`(SIL OFL, `media/fonts/NanumGothic-OFL.md`)입니다. PDF에는 쓰인 글자만 들어갑니다.
+- 필기 영역의 배치 규칙과 크기 상수는 `src/note.ts`, 명령 · 설정은 `src/notes.ts`에 있습니다. 필기 영역 명령의 알림 문구는 `vscode.l10n.t`로 쓰고 한글은 `l10n/bundle.l10n.ko.json`에 넣습니다.
 - 웹뷰 HTML은 `src/extension.ts`의 템플릿 문자열 안에 있습니다. 그 안의 정규식 역슬래시는 두 번 써야 합니다.

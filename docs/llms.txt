@@ -1,17 +1,17 @@
-# Ipynb PDF Converter
+# NotePDF
 
-> Jupyter 노트북(.ipynb)과 마크다운(.md)을 우클릭 한 번으로 종이 규격 PDF로 바꾸는 VS Code 확장. Python · Chromium 설치가 필요 없다. (A VS Code extension that converts .ipynb and .md files to paginated PDF with a selectable text layer and optional AES-256 password, entirely inside VS Code.)
+> Jupyter 노트북(.ipynb)과 마크다운(.md)을 우클릭 한 번으로 종이 규격 PDF로 바꾸고, PDF 페이지마다 줄노트 필기 영역을 붙이는 VS Code 확장. Python · Chromium 설치가 필요 없다. 예전 이름은 Ipynb PDF Converter. (A VS Code extension that converts .ipynb and .md files to paginated PDF with a selectable text layer and optional AES-256 password, and adds a ruled note area to every page of a PDF, entirely inside VS Code.)
 
 - 확장 ID: `leekh.ipynb-pdf-converter` · VS Code 1.84 이상 · MIT · 개발자 이광호
 - 설치: `ext install leekh.ipynb-pdf-converter`
 - 사용: `.ipynb` 또는 `.md` 파일 우클릭 → **PDF로 변환**(Convert to PDF) 하위 메뉴 → 명령 선택. 탐색기에서 여러 파일을 선택하면 모두 차례로 변환하고, 비밀번호는 한 번만 입력받아 모든 PDF에 같이 건다. 같은 폴더에 `.pdf`가 생기고, 같은 이름이 있으면 `이름 (1).pdf`처럼 번호를 붙인다.
-- 명령: 노트북/마크다운을 PDF로 변환 · (비밀번호). `teacherMode` 설정을 켜면 강사 마크를 넣는 (hossam) · (jussam) 명령이 추가된다.
+- 필기 영역: `.pdf` · `.ipynb` · `.md` 우클릭 → **필기 영역 추가**(Add Note Area) 하위 메뉴. 가로 원본은 아래에, 세로 원본은 오른쪽에 줄노트를 붙인 `원본이름_note.pdf`를 만든다. 피드백 모드(배너 + 분리선), 용지 크기 지정, 비밀번호 걸린 원본 PDF도 지원한다.
+- 명령: 노트북/마크다운을 PDF로 변환 · (비밀번호), 필기 영역 추가 (PDF) · (PDF, 비밀번호). `teacherMode` 설정을 켜면 강사 마크를 넣는 (hossam) · (jussam) 명령이 둘 다에 추가된다.
 - 특징: 용지 규격(A3 · A4 · A5 · B4 · B5 · Letter · Legal · 16:9 · 태블릿 7종, 세로/가로), 글줄 · 표 행 · 그림 중간에서 자르지 않는 페이지 나누기, 페이지 테마 3종과 코드 하이라이트 11종, 드래그 복사 · 검색되는 텍스트 층, 이미지 경로 · URL · 셀 첨부 포함, AES-256 비밀번호와 권한.
-- 다른 확장용 API: `activate`가 내보내는 `convertToPdfBytes`가 PDF 바이트를 돌려준다(파일은 만들지 않음). PDF2Note가 이 API를 쓴다.
 
 ## Docs
 
-- [README (전체 설명 · 모든 설정의 기본값과 허용값)](https://raw.githubusercontent.com/leekh4232/ipynb-to-pdf-converter/main/README.md): 사용 방법, 설정 표, API
+- [README (전체 설명 · 모든 설정의 기본값과 허용값)](https://raw.githubusercontent.com/leekh4232/ipynb-to-pdf-converter/main/README.md): 사용 방법, 설정 표
 - [CHANGELOG](https://raw.githubusercontent.com/leekh4232/ipynb-to-pdf-converter/main/CHANGELOG.md): 버전별 변경 사항
 - [소개 페이지](https://ipynb-to-pdf.hossam.kr/): 기능 요약
 
@@ -19,4 +19,3 @@
 
 - [GitHub 저장소](https://github.com/leekh4232/ipynb-to-pdf-converter)
 - [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=leekh.ipynb-pdf-converter)
-- [PDF2Note](https://pdf2note.hossam.kr/llms.txt): 이 확장의 API로 .ipynb · .md에 필기 영역을 붙이는 형제 확장

@@ -8,6 +8,8 @@ import { Notebook } from './notebook';
 import { isDarkColor, resolvePageTheme, resolveTheme } from './themes';
 import { resolvePageDimensions } from './paper';
 import { inlineImages, loadAsDataUrl } from './images';
+import { permissionFlags } from './note';
+import { registerNoteCommands } from './notes';
 
 let outputChannel: vscode.OutputChannel;
 
@@ -250,26 +252,8 @@ const COMMANDS: { id: string; withPassword: boolean; mark?: Mark }[] = [
   { id: 'ipynb-pdf-converter.convertToPdfJussamWithPassword', withPassword: true, mark: 'ju' },
 ];
 
-// API for other extensions (e.g. pdf2note): the same pipeline, returning the
-// PDF bytes instead of writing a file. Obtain it with
-// vscode.extensions.getExtension('leekh.ipynb-pdf-converter').exports.
-export interface ConvertRequest {
-  filePath: string;
-  // Settings to override on top of the user's configuration (e.g. headerText: '').
-  overrides?: Partial<Settings>;
-  password?: string;
-  mark?: Mark;
-  token?: vscode.CancellationToken;
-  onProgress?: (message: string, fraction: number) => void;
-}
-
-export interface ConverterApi {
-  readonly apiVersion: 1;
-  convertToPdfBytes(request: ConvertRequest): Promise<Uint8Array>;
-}
-
-export function activate(context: vscode.ExtensionContext): ConverterApi {
-  outputChannel = vscode.window.createOutputChannel('Ipynb PDF Converter');
+export function activate(context: vscode.ExtensionContext): void {
+  outputChannel = vscode.window.createOutputChannel('NotePDF');
 
   for (const { id, withPassword, mark } of COMMANDS) {
     context.subscriptions.push(
@@ -296,24 +280,19 @@ export function activate(context: vscode.ExtensionContext): ConverterApi {
     );
   }
 
-  void offerAutoUpdate(context);
+  registerNoteCommands(context, outputChannel, async (filePath, token, onProgress) => {
+    const settings = {
+      ...readSettings(vscode.workspace.getConfiguration('ipynb-pdf-converter')),
+      headerText: '',
+      footerText: '',
+    };
+    const baseName = path.basename(filePath).replace(/\.(ipynb|md)$/i, '');
+    const vars = { file: baseName, name: baseName, date: localDate() };
+    const { buffer } = await producePdf(context, filePath, settings, vars, undefined, undefined, token, onProgress);
+    return buffer;
+  });
 
-  return {
-    apiVersion: 1,
-    convertToPdfBytes: async (request) => {
-      const settings = {
-        ...readSettings(vscode.workspace.getConfiguration('ipynb-pdf-converter')),
-        ...(request.overrides ?? {}),
-      };
-      const baseName = path.basename(request.filePath).replace(/\.(ipynb|md)$/i, '');
-      const vars = { file: baseName, name: baseName, date: localDate() };
-      const token = request.token ?? new vscode.CancellationTokenSource().token;
-      const report = request.onProgress ?? (() => undefined);
-      outputChannel.appendLine(`📝 API request: ${path.basename(request.filePath)} → PDF bytes`);
-      const { buffer } = await producePdf(context, request.filePath, settings, vars, request.password, request.mark, token, report);
-      return buffer;
-    },
-  };
+  void offerAutoUpdate(context);
 }
 
 // Whether an extension auto-updates is the user's VS Code setting
@@ -334,7 +313,7 @@ async function offerAutoUpdate(context: vscode.ExtensionContext): Promise<void> 
   await context.globalState.update(AUTO_UPDATE_OFFERED, true);
   const turnOn = 'Turn on auto-update';
   const choice = await vscode.window.showInformationMessage(
-    'Ipynb PDF Converter: extension auto-update is off, so fixes and new features will not arrive on their own. Turn it on for all extensions?',
+    'NotePDF: extension auto-update is off, so fixes and new features will not arrive on their own. Turn it on for all extensions?',
     turnOn,
     'Not now'
   );
@@ -490,7 +469,7 @@ async function runConversion(
 }
 
 // Renders the source to PDF bytes: document assembly, webview capture and
-// pdf-lib assembly. Shared by the commands and the extension API.
+// pdf-lib assembly. Shared by the convert and note commands.
 async function producePdf(
   context: vscode.ExtensionContext,
   filePath: string,
@@ -1449,23 +1428,6 @@ function textWidth(font: PDFFont, text: string, cache: Map<number, number>): num
     width += w;
   }
   return width;
-}
-
-// Maps the permission list onto pdf-lib's flags (same as PDF2Note).
-function permissionFlags(allowed: Permission[]): {
-  printing: boolean | 'highResolution';
-  modifying: boolean;
-  copying: boolean;
-  annotating: boolean;
-  fillingForms: boolean;
-} {
-  return {
-    printing: allowed.includes('print') ? 'highResolution' : false,
-    modifying: allowed.includes('modify'),
-    copying: allowed.includes('copy'),
-    annotating: allowed.includes('annot-forms'),
-    fillingForms: allowed.includes('annot-forms'),
-  };
 }
 
 function resolveActiveSourceUri(): vscode.Uri | undefined {

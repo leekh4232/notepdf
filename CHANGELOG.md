@@ -4,6 +4,18 @@
 
 형식은 [Keep a Changelog](https://keepachangelog.com/ko/1.1.0/)를, 버전은 [유의적 버전](https://semver.org/lang/ko/)을 따릅니다.
 
+## [미배포]
+
+### 추가
+- **필기 영역 추가**: 별도 확장이던 PDF2Note를 이 확장에 합쳤습니다. `.pdf` · `.ipynb` · `.md`를 우클릭하고 **필기 영역 추가**(Add Note Area) 메뉴에서 고르면 페이지마다 줄노트 필기 영역과 머릿말 · 꼬릿말을 붙인 `원본이름_note.pdf`를 만듭니다. 가로 원본은 아래에, 세로 원본은 오른쪽에 붙고, 피드백 모드 · 용지 크기 지정 · 비밀번호 · `teacherMode` 명령 · 여러 파일 한꺼번에 처리도 그대로입니다. 이제 PDF2Note를 따로 설치하지 않아도 됩니다.
+- 필기 영역 설정은 `ipynb-pdf-converter.note.*` 아래에 있습니다: `note.paperSize`(기본 `original`) · `note.layoutMode`(`note`) · `note.feedbackBannerImage`(비움) · `note.lineGap`(`18`) · `note.headerText`(`{file}`) · `note.footerText`(`{page} / {total}`) · `note.headerAlign`(`left`) · `note.footerAlign`(`right`) · `note.headerFooterFontSize`(`10`) · `note.outputFileName`(`{name}_note`). 저장 위치(`outputDirectory`) · `openAfterConvert` · `pdfPassword` · `pdfPermissions` · `ownerPassword` · `teacherMode`는 변환과 같은 설정을 씁니다.
+
+### 변경
+- **확장 이름을 NotePDF로 바꿨습니다.** 확장 ID(`leekh.ipynb-pdf-converter`)와 설정 이름은 그대로라 업데이트만 하면 됩니다. 출력 창 이름도 NotePDF입니다.
+
+### 제거
+- 다른 확장용 API `convertToPdfBytes`를 없앴습니다. PDF2Note만 쓰던 API입니다.
+
 ## [0.11.0] - 2026-11-01
 
 ### 추가

@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Ipynb PDF Converter</title>
-<meta name="description" content="Jupyter 노트북과 마크다운을 우클릭 한 번으로 종이 규격 PDF로 바꾸는 VS Code 확장.">
+<title>NotePDF</title>
+<meta name="description" content="Jupyter 노트북과 마크다운을 우클릭 한 번으로 종이 규격 PDF로 바꾸고, PDF에 줄노트 필기 영역을 붙이는 VS Code 확장.">
 <meta name="color-scheme" content="dark">
-<meta property="og:title" content="Ipynb PDF Converter">
-<meta property="og:description" content="Jupyter 노트북과 마크다운을 우클릭 한 번으로 종이 규격 PDF로 바꾸는 VS Code 확장.">
+<meta property="og:title" content="NotePDF">
+<meta property="og:description" content="Jupyter 노트북과 마크다운을 우클릭 한 번으로 종이 규격 PDF로 바꾸고, PDF에 줄노트 필기 영역을 붙이는 VS Code 확장.">
 <meta property="og:image" content="https://ipynb-to-pdf.hossam.kr/assets/pipeline.png">
 <link rel="icon" href="assets/icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -87,8 +87,8 @@
 {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
-  "name": "Ipynb PDF Converter",
-  "description": "Jupyter 노트북(.ipynb)과 마크다운(.md)을 우클릭 한 번으로 종이 규격 PDF로 바꾸는 VS Code 확장. 텍스트 층, 비밀번호 보호, Python · Chromium 불필요.",
+  "name": "NotePDF",
+  "description": "Jupyter 노트북(.ipynb)과 마크다운(.md)을 우클릭 한 번으로 종이 규격 PDF로 바꾸고, PDF 페이지마다 줄노트 필기 영역을 붙이는 VS Code 확장. 텍스트 층, 비밀번호 보호, Python · Chromium 불필요.",
   "url": "https://ipynb-to-pdf.hossam.kr/",
   "applicationCategory": "DeveloperApplication",
   "applicationSubCategory": "Visual Studio Code extension",
@@ -122,9 +122,9 @@
 <body>
 <header>
   <div class="wrap">
-    <img class="logo" src="assets/icon.png" alt="Ipynb PDF Converter 아이콘">
-    <h1>Ipynb PDF Converter</h1>
-    <p class="tagline">Jupyter 노트북(<b>.ipynb</b>)과 마크다운(<b>.md</b>)을<br>우클릭 한 번으로 <b>종이 규격 PDF</b>로.</p>
+    <img class="logo" src="assets/icon.png" alt="NotePDF 아이콘">
+    <h1>NotePDF</h1>
+    <p class="tagline">Jupyter 노트북(<b>.ipynb</b>)과 마크다운(<b>.md</b>)을<br>우클릭 한 번으로 <b>종이 규격 PDF</b>로.<br>PDF에는 <b>줄노트 필기 영역</b>까지.</p>
     <div class="actions">
       <a class="btn primary" href="https://marketplace.visualstudio.com/items?itemName=leekh.ipynb-pdf-converter">VS Code Marketplace에서 설치</a>
       <a class="btn" href="https://github.com/leekh4232/ipynb-to-pdf-converter">GitHub</a>
@@ -135,6 +135,7 @@
 <main class="wrap">
     <figure><img src="assets/pipeline.png" alt="HTML 생성, Webview 렌더링, 캡처와 페이지 분할, 텍스트 층을 얹은 PDF 조립의 네 단계" loading="lazy"></figure>
     <figure><img src="assets/themes.png" alt="페이지 테마 light, dark, default 비교" loading="lazy"><figcaption>페이지 테마 3종</figcaption></figure>
+    <figure><img src="assets/layout.png" alt="필기 영역 레이아웃: 가로 원본은 아래에, 세로 원본은 오른쪽에 줄노트, 피드백 모드는 배너와 분리선" loading="lazy"><figcaption>필기 영역 레이아웃</figcaption></figure>
 
   <h2>하는 일</h2>
   <ul class="features">
@@ -143,6 +144,8 @@
       <li><span class="ico">📐</span><div><b>종이 · 태블릿 규격</b><p>A4 · B5 · Letter 같은 용지와 iPad · Galaxy Tab 화면 크기.</p></div></li>
       <li><span class="ico">🎨</span><div><b>테마</b><p>페이지 테마 3종과 코드 하이라이트 11종.</p></div></li>
       <li><span class="ico">🔒</span><div><b>비밀번호</b><p>AES-256 암호화와 인쇄 · 복사 권한 설정.</p></div></li>
+      <li><span class="ico">📝</span><div><b>필기 영역</b><p>PDF · 노트북 페이지마다 줄노트 필기 영역을 붙입니다.</p></div></li>
+      <li><span class="ico">🗂️</span><div><b>여러 파일 한꺼번에</b><p>탐색기에서 고른 파일을 모두 차례로 처리합니다.</p></div></li>
       <li><span class="ico">📦</span><div><b>설치할 것 없음</b><p>Python · nbconvert · Chromium 없이 VS Code만으로.</p></div></li>
   </ul>
 
@@ -150,8 +153,8 @@
   <div class="start">
     <div class="cmd"><span>ext install leekh.ipynb-pdf-converter</span><button type="button" data-copy="ext install leekh.ipynb-pdf-converter">복사</button></div>
     <ol>
-        <li><code>.ipynb</code> 또는 <code>.md</code> 파일을 우클릭 (여러 개 선택 가능)</li>
-        <li><b>PDF로 변환 → 노트북/마크다운을 PDF로 변환</b> 선택</li>
+        <li><code>.ipynb</code> · <code>.md</code> · <code>.pdf</code> 파일을 우클릭 (여러 개 선택 가능)</li>
+        <li><b>PDF로 변환</b> 또는 <b>필기 영역 추가</b>에서 명령 선택</li>
         <li>같은 폴더에 PDF가 생깁니다</li>
     </ol>
     
@@ -161,7 +164,6 @@
 <footer>
   <div class="wrap">
     <span>이광호 · 아이티윌 수업용 · MIT License</span>
-    <span>필기 노트가 필요하면 <a href="https://pdf2note.hossam.kr/">PDF2Note</a></span>
   </div>
 </footer>
 

@@ -2,9 +2,9 @@
 
 <img src="media/icon.png" width="112" alt="">
 
-# Ipynb PDF Converter
+# NotePDF
 
-**Jupyter 노트북(.ipynb)과 마크다운(.md)을 우클릭 한 번으로 종이 규격 PDF로.**
+**Jupyter 노트북(.ipynb)과 마크다운(.md)을 우클릭 한 번으로 종이 규격 PDF로. PDF에는 줄노트 필기 영역도 붙입니다.**
 
 Python도 Chromium도 설치하지 않습니다. VS Code 안에서 렌더링부터 저장까지 끝냅니다.
 
@@ -36,13 +36,15 @@ Python도 Chromium도 설치하지 않습니다. VS Code 안에서 렌더링부�
 | 🎨 **테마** | 페이지 테마 3종, 코드 하이라이트 11종 |
 | 📋 **텍스트 복사 · 검색** | 보이는 글자를 드래그해서 복사하고 PDF 뷰어에서 검색할 수 있음. 코드 들여쓰기도 그대로 복사됨 |
 | 🖼️ **이미지 그대로** | 상대·절대 경로, `file:` · `http(s)` URL, 셀 첨부(`attachment:`) 모두 PDF에 포함. SVG는 보이는 크기 그대로 페이지 해상도로 그려 넣음. 못 찾은 이미지는 경고 |
-| 🔒 **비밀번호** | AES-256 암호화, 열람 비밀번호와 권한(인쇄 · 복사 · 수정 · 주석) |
+| 📝 **필기 영역** | `.pdf` · `.ipynb` · `.md` 페이지마다 줄노트 필기 영역과 머릿말 · 꼬릿말. 가로 원본은 아래에, 세로 원본은 오른쪽에 |
+| 💬 **피드백 모드** | 원본 아래 배너 이미지, 필기 영역을 좌우로 나누는 분리선 |
+| 🔒 **비밀번호** | AES-256 암호화, 열람 비밀번호와 권한(인쇄 · 복사 · 수정 · 주석). 비밀번호 걸린 원본 PDF에도 필기 영역을 붙일 수 있음 |
 | 📦 **의존성 0** | Python · nbconvert · Playwright · Chromium 설치 불필요 |
 | 🌐 **한국어 UI** | VS Code 표시 언어가 한국어면 한글, 그 외에는 영어 |
 
 ## 설치
 
-Marketplace에서 **Ipynb PDF Converter**를 검색하거나, 명령 팔레트(`Ctrl/Cmd+P`)에서:
+Marketplace에서 **NotePDF**를 검색하거나, 명령 팔레트(`Ctrl/Cmd+P`)에서:
 
 ```
 ext install leekh.ipynb-pdf-converter
@@ -61,6 +63,20 @@ ext install leekh.ipynb-pdf-converter
 
 3. 같은 폴더에 `.pdf`가 생깁니다. 같은 이름이 있으면 `이름 (1).pdf`, `이름 (2).pdf`처럼 번호를 붙이고 덮어쓰지 않습니다.
 
+### 필기 영역 추가
+
+`.pdf` · `.ipynb` · `.md`를 우클릭하고 **필기 영역 추가**(Add Note Area) 메뉴에서 고릅니다. `.ipynb` · `.md`는 메모리에서 먼저 PDF로 바꾼 뒤 붙이므로 임시 파일이 남지 않습니다. 원본의 글자는 그대로 남아 복사 · 검색이 됩니다.
+
+| 한국어 UI | English UI | 하는 일 |
+|:--|:--|:--|
+| 필기 영역 추가 (PDF) | Add Note Area (PDF) | 비밀번호 없이 |
+| 필기 영역 추가 (PDF, 비밀번호) | Add Note Area (PDF, with Password) | 변환과 같은 규칙. 여러 파일이면 한 번만 묻고 모든 PDF에 같은 비밀번호를 씀. 비밀번호 걸린 원본은 파일마다 물어봄 |
+| 필기 영역 추가 (hossam) · (jussam) | Add Note Area (hossam) · (jussam) | `teacherMode`를 켜면 추가. 강사 마크를 넣음(비밀번호 유무 각각) |
+
+같은 폴더에 `원본이름_note.pdf`가 생깁니다. 이 명령의 알림 · 진행률 · 로그는 VS Code 표시 언어를 따릅니다.
+
+![세 가지 레이아웃: 가로 원본은 세로 페이지에 위아래로, 세로 원본은 가로 페이지에 좌우로, 피드백 모드는 배너와 분리선](media/readme/layout.png)
+
 `.md`의 `---`로 감싼 머리글(YAML front matter)은 PDF에 넣지 않습니다. 맨 위 머리글(예: `theme` · `title` · `layout`)과 Slidev 슬라이드마다 붙는 `layout: two-cols` 같은 블록이 모두 빠지고, 코드 블록 안의 예시는 그대로 남습니다.
 
 설치 뒤 VS Code의 확장 자동 업데이트(`extensions.autoUpdate`)가 꺼져 있으면 처음 한 번 켤지 묻습니다. **Turn on auto-update**를 누르면 사용자 설정이 켜지고, **Not now**를 누르면 다시 묻지 않습니다.
@@ -69,7 +85,7 @@ ext install leekh.ipynb-pdf-converter
 
 ## 설정
 
-설정 UI에서 **Ipynb PDF Converter** 섹션을 열면 중요도순으로 나옵니다. 자주 쓰는 값만 `settings.json`에 적으면:
+설정 UI에서 **NotePDF** 섹션(필기 영역 설정은 **필기 영역** 섹션)을 열면 중요도순으로 나옵니다. 자주 쓰는 값만 `settings.json`에 적으면:
 
 ```json
 {
@@ -108,9 +124,9 @@ ext install leekh.ipynb-pdf-converter
 
 | 설정 | 기본값 | 설명 |
 |:--|:--|:--|
-| `outputDirectory` | 비움 | 비우면 원본 옆. 상대 경로(`pdf`)는 원본 폴더 기준, 절대 경로 가능. 없으면 만듦 |
+| `outputDirectory` | 비움 | 변환 · 필기 영역 추가 공용. 비우면 원본 옆. 상대 경로(`pdf`)는 원본 폴더 기준, 절대 경로 가능. 없으면 만듦 |
 | `outputFileName` | `{name}` | `{name}` 원본 이름, `{date}` 날짜(YYYY-MM-DD) |
-| `openAfterConvert` | `false` | 변환 후 시스템 뷰어로 열기 |
+| `openAfterConvert` | `false` | 변환 · 필기 영역 추가가 끝나면 시스템 뷰어로 열기 |
 
 </details>
 
@@ -163,7 +179,7 @@ ext install leekh.ipynb-pdf-converter
 </details>
 
 <details>
-<summary><b>보안</b> (<code>(비밀번호)</code> 명령에서만)</summary>
+<summary><b>보안</b> (<code>(비밀번호)</code> 명령에서만, 변환 · 필기 영역 추가 공용)</summary>
 
 | 설정 | 기본값 | 설명 |
 |:--|:--|:--|
@@ -186,19 +202,33 @@ ext install leekh.ipynb-pdf-converter
 </details>
 
 <details>
+<summary><b>필기 영역</b> (<code>필기 영역 추가</code> 명령, 이름 앞에 <code>ipynb-pdf-converter.note.</code>)</summary>
+
+| 설정 | 기본값 | 설명 |
+|:--|:--|:--|
+| `paperSize` | `original` | 원본 100% 크기로 페이지를 키움. 용지 이름(`A0`-`A6` · `B0`-`B6` · `LETTER` · `LEGAL` · `TABLOID` · `LEDGER` · `iPadPro13` · `iPadPro11` · `iPadAir13` · `iPad11` · `iPadMini` · `GalaxyTabS11` · `GalaxyTabS11Ultra`)을 고르면 원본을 그 안에 맞춰 줄이며 판형은 자동(가로 원본 → 세로 용지, 세로 원본 → 가로 용지) |
+| `layoutMode` | `note` | `feedback`: 배너 + 분리선(가로 원본에서만) |
+| `feedbackBannerImage` | 비움 | 피드백 배너 이미지(원본 기준 상대 경로 · 절대 경로 · URL). 비우면 분리선만 |
+| `lineGap` | `18` | 줄 간격(A4 세로 기준 pt, 6-60). 페이지 크기에 비례해 조절됨 |
+| `headerText` · `footerText` | `{file}` · `{page} / {total}` | 새 페이지의 머릿말 · 꼬릿말. `{file}` `{date}` `{page}` `{total}` 사용 가능. 비우면 해당 띠를 만들지 않음. 변환 설정의 머릿말 · 꼬릿말은 쓰지 않음 |
+| `headerAlign` · `footerAlign` | `left` · `right` | `left` · `center` · `right` |
+| `headerFooterFontSize` | `10` | 글자 크기(pt, 6-24) |
+| `outputFileName` | `{name}_note` | `{name}` 원본 이름, `{date}` 날짜(YYYY-MM-DD) |
+
+저장 위치 · 비밀번호 · 권한 · `teacherMode`는 변환과 같은 설정을 씁니다.
+
+</details>
+
+<details>
 <summary><b>고급 · teacher mode</b></summary>
 
 | 설정 | 기본값 | 설명 |
 |:--|:--|:--|
 | `allowRemoteImages` | `true` | 문서가 참조하는 http(s) 이미지 내려받기 |
 | `renderTimeoutSeconds` | `60` | 웹뷰 렌더링 제한 시간. 긴 노트북이면 올리기 |
-| `teacherMode` | `false` | 우클릭 메뉴·명령 팔레트에 `(hossam)` · `(hossam, 비밀번호)` · `(jussam)` · `(jussam, 비밀번호)` 변환 명령 추가. `nb_convert.py --ssam`처럼 강사 마크(`https://data.hossam.kr/itwill-ho.png` / `itwill-ju.png`, 폭 100 px)를 모든 페이지 우측 상단 여백에 그리며, 이때 `headerText`는 표시하지 않음(꼬릿말은 유지) |
+| `teacherMode` | `false` | 우클릭 메뉴·명령 팔레트에 `(hossam)` · `(hossam, 비밀번호)` · `(jussam)` · `(jussam, 비밀번호)` 변환 · 필기 영역 추가 명령 추가. `nb_convert.py --ssam`처럼 강사 마크(`https://data.hossam.kr/itwill-ho.png` / `itwill-ju.png`, 폭 100 px)를 모든 페이지 우측 상단 여백에 그리며, 이때 `headerText`는 표시하지 않음(꼬릿말은 유지) |
 
 </details>
-
-## 다른 확장에서 쓰기
-
-`activate`가 내보내는 `convertToPdfBytes` API를 부르면 같은 파이프라인으로 PDF 바이트를 돌려받습니다. 파일은 만들지 않습니다. **PDF2Note**가 이 API로 `.ipynb` · `.md`에 필기 영역을 붙입니다.
 
 ## 개발자 · 라이선스
 
