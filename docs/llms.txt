@@ -11,11 +11,11 @@
 
 ## Docs
 
-- [README (전체 설명 · 모든 설정의 기본값과 허용값)](https://raw.githubusercontent.com/leekh4232/ipynb-to-pdf-converter/main/README.md): 사용 방법, 설정 표
-- [CHANGELOG](https://raw.githubusercontent.com/leekh4232/ipynb-to-pdf-converter/main/CHANGELOG.md): 버전별 변경 사항
-- [소개 페이지](https://ipynb-to-pdf.hossam.kr/): 기능 요약
+- [README (전체 설명 · 모든 설정의 기본값과 허용값)](https://raw.githubusercontent.com/leekh4232/notepdf/main/README.md): 사용 방법, 설정 표
+- [CHANGELOG](https://raw.githubusercontent.com/leekh4232/notepdf/main/CHANGELOG.md): 버전별 변경 사항
+- [소개 페이지](https://notepdf.hossam.kr/): 기능 요약
 
 ## Optional
 
-- [GitHub 저장소](https://github.com/leekh4232/ipynb-to-pdf-converter)
+- [GitHub 저장소](https://github.com/leekh4232/notepdf)
 - [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=leekh.ipynb-pdf-converter)

@@ -21,7 +21,7 @@ VS Code 확장 **NotePDF**(`leekh.ipynb-pdf-converter`, 예전 이름 Ipynb PDF 
 | 파일 | 내용 |
 |:--|:--|
 | `README.md` | Marketplace와 GitHub에 보이는 설명. 배지, 한눈에 보기 표, 사용 방법, 설정 표(`<details>`), API |
-| `docs/index.html` | GitHub Pages 소개 페이지 https://ipynb-to-pdf.hossam.kr (`docs/CNAME`). 다크 테마, 짧게 |
+| `docs/index.html` | GitHub Pages 소개 페이지 https://notepdf.hossam.kr (`docs/CNAME`). 다크 테마, 짧게 |
 | `docs/llms.txt` · `docs/robots.txt` · `docs/sitemap.xml` | AI · 크롤러용. `llms.txt`는 사이트 요약(마크다운)과 문서 링크. 각 html `<head>`에는 JSON-LD 구조화 데이터와 `llms.txt` 링크가 있습니다 |
 | `docs/assets/` | 소개 페이지 그림. README 그림의 다크 버전과 `icon.png` |
 | `media/readme/*.svg` → `*.png` | README 그림 원본과 렌더링 결과 |

@@ -10,13 +10,13 @@ Python도 Chromium도 설치하지 않습니다. VS Code 안에서 렌더링부�
 
 [![Marketplace](https://vsmarketplacebadges.dev/version-short/leekh.ipynb-pdf-converter.svg?label=Marketplace&color=0066b8)](https://marketplace.visualstudio.com/items?itemName=leekh.ipynb-pdf-converter)
 [![Installs](https://vsmarketplacebadges.dev/installs-short/leekh.ipynb-pdf-converter.svg?color=0066b8)](https://marketplace.visualstudio.com/items?itemName=leekh.ipynb-pdf-converter)
-[![Release](https://img.shields.io/github/v/release/leekh4232/ipynb-to-pdf-converter?label=release&color=3f54b5)](https://github.com/leekh4232/ipynb-to-pdf-converter/releases)
+[![Release](https://img.shields.io/github/v/release/leekh4232/notepdf?label=release&color=3f54b5)](https://github.com/leekh4232/notepdf/releases)
 ![VS Code ^1.84](https://img.shields.io/badge/VS%20Code-%5E1.84-007ACC)
 ![Python · Chromium not needed](https://img.shields.io/badge/Python%20%C2%B7%20Chromium-not%20needed-2ea44f)
-[![Homepage](https://img.shields.io/badge/%EC%86%8C%EA%B0%9C%20%ED%8E%98%EC%9D%B4%EC%A7%80-ipynb--to--pdf.hossam.kr-24292f)](https://ipynb-to-pdf.hossam.kr/)
+[![Homepage](https://img.shields.io/badge/%EC%86%8C%EA%B0%9C%20%ED%8E%98%EC%9D%B4%EC%A7%80-notepdf.hossam.kr-24292f)](https://notepdf.hossam.kr/)
 [![License MIT](https://img.shields.io/badge/license-MIT-2ea44f)](LICENSE)
 
-🌐 **소개 페이지 · [ipynb-to-pdf.hossam.kr](https://ipynb-to-pdf.hossam.kr/)**
+🌐 **소개 페이지 · [notepdf.hossam.kr](https://notepdf.hossam.kr/)**
 
 </div>
 

@@ -12,6 +12,7 @@
 
 ### 변경
 - **확장 이름을 NotePDF로 바꿨습니다.** 확장 ID(`leekh.ipynb-pdf-converter`)와 설정 이름은 그대로라 업데이트만 하면 됩니다. 출력 창 이름도 NotePDF입니다.
+- GitHub 저장소를 [leekh4232/notepdf](https://github.com/leekh4232/notepdf)로, 소개 페이지를 [notepdf.hossam.kr](https://notepdf.hossam.kr/)로 옮겼습니다.
 
 ### 제거
 - 다른 확장용 API `convertToPdfBytes`를 없앴습니다. PDF2Note만 쓰던 API입니다.

@@ -7,9 +7,9 @@
   "icon": "media/icon.png",
   "repository": {
     "type": "git",
-    "url": "https://github.com/leekh4232/ipynb-to-pdf-converter"
+    "url": "https://github.com/leekh4232/notepdf"
   },
-  "homepage": "https://ipynb-to-pdf.hossam.kr/",
+  "homepage": "https://notepdf.hossam.kr/",
   "author": {
     "name": "이광호",
     "email": "leekh4232@gmail.com"
