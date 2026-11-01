@@ -72,6 +72,7 @@ git add -A && git commit -m "<type>: <요약>" && git push origin main
 
 - 커밋 메시지는 영어 Conventional Commits 형식(`feat:` · `fix:` · `docs:` · `chore:`)을 씁니다.
 - **`main`에 push한 커밋 메시지에 `build`가 들어가면 Marketplace 배포가 시작됩니다** (`.github/workflows/build-and-publish.yml`). `rebuild` 같은 단어에도 걸리니, 배포하지 않을 때는 이 글자를 넣지 않습니다.
+- 배포 인증은 Marketplace Trusted Publishing(`vsce publish --oidc`)입니다. PAT 시크릿은 쓰지 않습니다. 워크플로 파일 이름을 바꾸면 Marketplace 게시자 페이지의 정책도 고쳐야 합니다.
 - 배포는 사용자가 요청할 때만 합니다. 그때 메시지에 `build`와 올림 단위를 함께 씁니다. 예: `feat: text layer (minor build)`. 단위가 없으면 `patch`입니다.
 - 워크플로가 버전을 올려 `chore: release vX.Y.Z [skip ci]` 커밋과 태그를 push합니다. 다음 작업 전에 `git pull`합니다.
 - 배포 후 Marketplace에 새 버전이 보이는지 확인합니다. 반영까지 몇 분 걸립니다.
