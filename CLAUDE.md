@@ -1,6 +1,6 @@
 # NotePDF 작업 지침
 
-VS Code 확장 **NotePDF**(`leekh.ipynb-pdf-converter`, 예전 이름 Ipynb PDF Converter) 저장소입니다. `.ipynb` · `.md`를 웹뷰에서 렌더링해 페이지 그림으로 캡처하고, pdf-lib로 투명 텍스트 층을 얹어 PDF를 만듭니다. **필기 영역 추가** 명령은 PDF(또는 먼저 변환한 `.ipynb` · `.md`)의 페이지마다 줄노트 필기 영역을 붙입니다. 이 기능은 예전 별도 확장 PDF2Note를 합친 것입니다(`src/note.ts` · `src/notes.ts`). 확장 ID와 설정 이름 `ipynb-pdf-converter.*`는 바꾸지 않습니다.
+VS Code 확장 **NotePDF**(`leekh.ipynb-pdf-converter`, 예전 이름 Ipynb PDF Converter) 저장소입니다. `.ipynb` · `.md`를 웹뷰에서 렌더링해 페이지 그림으로 캡처하고, pdf-lib로 투명 텍스트 층을 얹어 PDF를 만듭니다. **필기 영역 추가** 명령은 PDF(또는 먼저 변환한 `.ipynb` · `.md`)의 페이지마다 줄노트 필기 영역을 붙입니다. 이 기능은 예전 별도 확장 PDF2Note를 합친 것입니다(`src/note.ts` · `src/notes.ts`). 설정 이름은 `notepdf.*`입니다(0.12.x까지는 `ipynb-pdf-converter.*`였고, `migrateSettings`가 예전 값을 옮깁니다). 확장 ID와 명령 ID `ipynb-pdf-converter.*`는 바꾸지 않습니다.
 
 응답과 문서는 한글로 씁니다. 코드, 커밋 메시지, 설정 이름은 원래 언어를 유지합니다.
 

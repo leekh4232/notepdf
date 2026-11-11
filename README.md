@@ -89,14 +89,14 @@ ext install leekh.ipynb-pdf-converter
 
 ```json
 {
-  "ipynb-pdf-converter.pdfTheme": "light",
-  "ipynb-pdf-converter.codeTheme": "mdr-dark",
-  "ipynb-pdf-converter.pdfPageSize": "A4",
-  "ipynb-pdf-converter.pdfPageOrientation": "portrait",
-  "ipynb-pdf-converter.pdfPageMargin": 48,
-  "ipynb-pdf-converter.headerText": "{file}",
-  "ipynb-pdf-converter.footerText": "{page} / {total}",
-  "ipynb-pdf-converter.pdfPassword": ""
+  "notepdf.pdfTheme": "light",
+  "notepdf.codeTheme": "mdr-dark",
+  "notepdf.pdfPageSize": "A4",
+  "notepdf.pdfPageOrientation": "portrait",
+  "notepdf.pdfPageMargin": 48,
+  "notepdf.headerText": "{file}",
+  "notepdf.footerText": "{page} / {total}",
+  "notepdf.pdfPassword": ""
 }
 ```
 
@@ -104,7 +104,7 @@ ext install leekh.ipynb-pdf-converter
 
 ![페이지 테마 light, dark, default 비교](media/readme/themes.png)
 
-전체 설정은 아래를 펼쳐 보세요. 설정 이름 앞에는 모두 `ipynb-pdf-converter.`가 붙습니다.
+전체 설정은 아래를 펼쳐 보세요. 설정 이름 앞에는 모두 `notepdf.`이 붙습니다.
 
 <details>
 <summary><b>모양 · 용지</b></summary>
@@ -202,7 +202,7 @@ ext install leekh.ipynb-pdf-converter
 </details>
 
 <details>
-<summary><b>필기 영역</b> (<code>필기 영역 추가</code> 명령, 이름 앞에 <code>ipynb-pdf-converter.note.</code>)</summary>
+<summary><b>필기 영역</b> (<code>필기 영역 추가</code> 명령, 이름 앞에 <code>notepdf.note.</code>)</summary>
 
 | 설정 | 기본값 | 설명 |
 |:--|:--|:--|

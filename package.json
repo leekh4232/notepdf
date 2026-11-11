@@ -168,19 +168,19 @@
         },
         {
           "command": "ipynb-pdf-converter.convertToPdfHossam",
-          "when": "(resourceExtname == .ipynb || resourceExtname == .md || activeEditor == 'workbench.editor.notebook') && config.ipynb-pdf-converter.teacherMode"
+          "when": "(resourceExtname == .ipynb || resourceExtname == .md || activeEditor == 'workbench.editor.notebook') && config.notepdf.teacherMode"
         },
         {
           "command": "ipynb-pdf-converter.convertToPdfHossamWithPassword",
-          "when": "(resourceExtname == .ipynb || resourceExtname == .md || activeEditor == 'workbench.editor.notebook') && config.ipynb-pdf-converter.teacherMode"
+          "when": "(resourceExtname == .ipynb || resourceExtname == .md || activeEditor == 'workbench.editor.notebook') && config.notepdf.teacherMode"
         },
         {
           "command": "ipynb-pdf-converter.convertToPdfJussam",
-          "when": "(resourceExtname == .ipynb || resourceExtname == .md || activeEditor == 'workbench.editor.notebook') && config.ipynb-pdf-converter.teacherMode"
+          "when": "(resourceExtname == .ipynb || resourceExtname == .md || activeEditor == 'workbench.editor.notebook') && config.notepdf.teacherMode"
         },
         {
           "command": "ipynb-pdf-converter.convertToPdfJussamWithPassword",
-          "when": "(resourceExtname == .ipynb || resourceExtname == .md || activeEditor == 'workbench.editor.notebook') && config.ipynb-pdf-converter.teacherMode"
+          "when": "(resourceExtname == .ipynb || resourceExtname == .md || activeEditor == 'workbench.editor.notebook') && config.notepdf.teacherMode"
         },
         {
           "command": "ipynb-pdf-converter.addNotes",
@@ -192,19 +192,19 @@
         },
         {
           "command": "ipynb-pdf-converter.addNotesHossam",
-          "when": "(resourceExtname == .pdf || resourceExtname == .ipynb || resourceExtname == .md) && config.ipynb-pdf-converter.teacherMode"
+          "when": "(resourceExtname == .pdf || resourceExtname == .ipynb || resourceExtname == .md) && config.notepdf.teacherMode"
         },
         {
           "command": "ipynb-pdf-converter.addNotesHossamWithPassword",
-          "when": "(resourceExtname == .pdf || resourceExtname == .ipynb || resourceExtname == .md) && config.ipynb-pdf-converter.teacherMode"
+          "when": "(resourceExtname == .pdf || resourceExtname == .ipynb || resourceExtname == .md) && config.notepdf.teacherMode"
         },
         {
           "command": "ipynb-pdf-converter.addNotesJussam",
-          "when": "(resourceExtname == .pdf || resourceExtname == .ipynb || resourceExtname == .md) && config.ipynb-pdf-converter.teacherMode"
+          "when": "(resourceExtname == .pdf || resourceExtname == .ipynb || resourceExtname == .md) && config.notepdf.teacherMode"
         },
         {
           "command": "ipynb-pdf-converter.addNotesJussamWithPassword",
-          "when": "(resourceExtname == .pdf || resourceExtname == .ipynb || resourceExtname == .md) && config.ipynb-pdf-converter.teacherMode"
+          "when": "(resourceExtname == .pdf || resourceExtname == .ipynb || resourceExtname == .md) && config.notepdf.teacherMode"
         }
       ],
       "ipynb-pdf-converter.submenu": [
@@ -220,22 +220,22 @@
         },
         {
           "command": "ipynb-pdf-converter.convertToPdfHossam",
-          "when": "(resourceExtname == .ipynb || resourceExtname == .md) && config.ipynb-pdf-converter.teacherMode",
+          "when": "(resourceExtname == .ipynb || resourceExtname == .md) && config.notepdf.teacherMode",
           "group": "2_teacher@2"
         },
         {
           "command": "ipynb-pdf-converter.convertToPdfHossamWithPassword",
-          "when": "(resourceExtname == .ipynb || resourceExtname == .md) && config.ipynb-pdf-converter.teacherMode",
+          "when": "(resourceExtname == .ipynb || resourceExtname == .md) && config.notepdf.teacherMode",
           "group": "2_teacher@3"
         },
         {
           "command": "ipynb-pdf-converter.convertToPdfJussam",
-          "when": "(resourceExtname == .ipynb || resourceExtname == .md) && config.ipynb-pdf-converter.teacherMode",
+          "when": "(resourceExtname == .ipynb || resourceExtname == .md) && config.notepdf.teacherMode",
           "group": "2_teacher@4"
         },
         {
           "command": "ipynb-pdf-converter.convertToPdfJussamWithPassword",
-          "when": "(resourceExtname == .ipynb || resourceExtname == .md) && config.ipynb-pdf-converter.teacherMode",
+          "when": "(resourceExtname == .ipynb || resourceExtname == .md) && config.notepdf.teacherMode",
           "group": "2_teacher@5"
         }
       ],
@@ -252,22 +252,22 @@
         },
         {
           "command": "ipynb-pdf-converter.addNotesHossam",
-          "when": "(resourceExtname == .pdf || resourceExtname == .ipynb || resourceExtname == .md) && config.ipynb-pdf-converter.teacherMode",
+          "when": "(resourceExtname == .pdf || resourceExtname == .ipynb || resourceExtname == .md) && config.notepdf.teacherMode",
           "group": "2_teacher@2"
         },
         {
           "command": "ipynb-pdf-converter.addNotesHossamWithPassword",
-          "when": "(resourceExtname == .pdf || resourceExtname == .ipynb || resourceExtname == .md) && config.ipynb-pdf-converter.teacherMode",
+          "when": "(resourceExtname == .pdf || resourceExtname == .ipynb || resourceExtname == .md) && config.notepdf.teacherMode",
           "group": "2_teacher@3"
         },
         {
           "command": "ipynb-pdf-converter.addNotesJussam",
-          "when": "(resourceExtname == .pdf || resourceExtname == .ipynb || resourceExtname == .md) && config.ipynb-pdf-converter.teacherMode",
+          "when": "(resourceExtname == .pdf || resourceExtname == .ipynb || resourceExtname == .md) && config.notepdf.teacherMode",
           "group": "2_teacher@4"
         },
         {
           "command": "ipynb-pdf-converter.addNotesJussamWithPassword",
-          "when": "(resourceExtname == .pdf || resourceExtname == .ipynb || resourceExtname == .md) && config.ipynb-pdf-converter.teacherMode",
+          "when": "(resourceExtname == .pdf || resourceExtname == .ipynb || resourceExtname == .md) && config.notepdf.teacherMode",
           "group": "2_teacher@5"
         }
       ]
@@ -276,7 +276,7 @@
       {
         "title": "%config.title%",
         "properties": {
-          "ipynb-pdf-converter.pdfTheme": {
+          "notepdf.pdfTheme": {
             "type": "string",
             "default": "light",
             "enum": [
@@ -291,7 +291,7 @@
             ],
             "description": "%config.pdfTheme.description%"
           },
-          "ipynb-pdf-converter.codeTheme": {
+          "notepdf.codeTheme": {
             "type": "string",
             "default": "mdr-dark",
             "enum": [
@@ -322,7 +322,7 @@
             ],
             "description": "%config.codeTheme.description%"
           },
-          "ipynb-pdf-converter.pdfPageSize": {
+          "notepdf.pdfPageSize": {
             "type": "string",
             "default": "A4",
             "enum": [
@@ -361,7 +361,7 @@
             ],
             "description": "%config.pdfPageSize.description%"
           },
-          "ipynb-pdf-converter.pdfPageOrientation": {
+          "notepdf.pdfPageOrientation": {
             "type": "string",
             "default": "portrait",
             "enum": [
@@ -370,39 +370,39 @@
             ],
             "description": "%config.pdfPageOrientation.description%"
           },
-          "ipynb-pdf-converter.pdfPageMargin": {
+          "notepdf.pdfPageMargin": {
             "type": "number",
             "default": 48,
             "minimum": 0,
             "maximum": 200,
             "description": "%config.pdfPageMargin.description%"
           },
-          "ipynb-pdf-converter.outputDirectory": {
+          "notepdf.outputDirectory": {
             "type": "string",
             "default": "",
             "description": "%config.outputDirectory.description%"
           },
-          "ipynb-pdf-converter.outputFileName": {
+          "notepdf.outputFileName": {
             "type": "string",
             "default": "{name}",
             "description": "%config.outputFileName.description%"
           },
-          "ipynb-pdf-converter.openAfterConvert": {
+          "notepdf.openAfterConvert": {
             "type": "boolean",
             "default": false,
             "description": "%config.openAfterConvert.description%"
           },
-          "ipynb-pdf-converter.headerText": {
+          "notepdf.headerText": {
             "type": "string",
             "default": "{file}",
             "description": "%config.headerText.description%"
           },
-          "ipynb-pdf-converter.footerText": {
+          "notepdf.footerText": {
             "type": "string",
             "default": "{page} / {total}",
             "description": "%config.footerText.description%"
           },
-          "ipynb-pdf-converter.headerAlign": {
+          "notepdf.headerAlign": {
             "type": "string",
             "default": "right",
             "enum": [
@@ -412,7 +412,7 @@
             ],
             "description": "%config.headerAlign.description%"
           },
-          "ipynb-pdf-converter.footerAlign": {
+          "notepdf.footerAlign": {
             "type": "string",
             "default": "right",
             "enum": [
@@ -422,14 +422,14 @@
             ],
             "description": "%config.footerAlign.description%"
           },
-          "ipynb-pdf-converter.headerFooterFontSize": {
+          "notepdf.headerFooterFontSize": {
             "type": "number",
             "default": 10,
             "minimum": 6,
             "maximum": 24,
             "description": "%config.headerFooterFontSize.description%"
           },
-          "ipynb-pdf-converter.pageBreakBefore": {
+          "notepdf.pageBreakBefore": {
             "type": "string",
             "default": "none",
             "enum": [
@@ -444,7 +444,7 @@
             ],
             "description": "%config.pageBreakBefore.description%"
           },
-          "ipynb-pdf-converter.breakBeforeTags": {
+          "notepdf.breakBeforeTags": {
             "type": "array",
             "items": {
               "type": "string"
@@ -452,17 +452,17 @@
             "default": [],
             "description": "%config.breakBeforeTags.description%"
           },
-          "ipynb-pdf-converter.hideCodeCells": {
+          "notepdf.hideCodeCells": {
             "type": "boolean",
             "default": false,
             "description": "%config.hideCodeCells.description%"
           },
-          "ipynb-pdf-converter.hideOutputs": {
+          "notepdf.hideOutputs": {
             "type": "boolean",
             "default": false,
             "description": "%config.hideOutputs.description%"
           },
-          "ipynb-pdf-converter.excludeCellTags": {
+          "notepdf.excludeCellTags": {
             "type": "array",
             "items": {
               "type": "string"
@@ -470,7 +470,7 @@
             "default": [],
             "description": "%config.excludeCellTags.description%"
           },
-          "ipynb-pdf-converter.tableNowrap": {
+          "notepdf.tableNowrap": {
             "type": "string",
             "default": "first",
             "enum": [
@@ -485,7 +485,7 @@
             ],
             "description": "%config.tableNowrap.description%"
           },
-          "ipynb-pdf-converter.showLineNumbers": {
+          "notepdf.showLineNumbers": {
             "type": "string",
             "default": "auto",
             "enum": [
@@ -500,24 +500,24 @@
             ],
             "description": "%config.showLineNumbers.description%"
           },
-          "ipynb-pdf-converter.baseFontSize": {
+          "notepdf.baseFontSize": {
             "type": "number",
             "default": 16,
             "minimum": 8,
             "maximum": 32,
             "description": "%config.baseFontSize.description%"
           },
-          "ipynb-pdf-converter.bodyFontFamily": {
+          "notepdf.bodyFontFamily": {
             "type": "string",
             "default": "",
             "description": "%config.bodyFontFamily.description%"
           },
-          "ipynb-pdf-converter.codeFontFamily": {
+          "notepdf.codeFontFamily": {
             "type": "string",
             "default": "",
             "description": "%config.codeFontFamily.description%"
           },
-          "ipynb-pdf-converter.imageFormat": {
+          "notepdf.imageFormat": {
             "type": "string",
             "default": "png",
             "enum": [
@@ -530,26 +530,26 @@
             ],
             "description": "%config.imageFormat.description%"
           },
-          "ipynb-pdf-converter.jpegQuality": {
+          "notepdf.jpegQuality": {
             "type": "number",
             "default": 85,
             "minimum": 10,
             "maximum": 100,
             "description": "%config.jpegQuality.description%"
           },
-          "ipynb-pdf-converter.deviceScaleFactor": {
+          "notepdf.deviceScaleFactor": {
             "type": "number",
             "default": 3,
             "minimum": 1,
             "maximum": 5,
             "description": "%config.deviceScaleFactor.description%"
           },
-          "ipynb-pdf-converter.pdfPassword": {
+          "notepdf.pdfPassword": {
             "type": "string",
             "default": "",
             "description": "%config.pdfPassword.description%"
           },
-          "ipynb-pdf-converter.pdfPermissions": {
+          "notepdf.pdfPermissions": {
             "type": "array",
             "items": {
               "type": "string",
@@ -566,56 +566,56 @@
             ],
             "description": "%config.pdfPermissions.description%"
           },
-          "ipynb-pdf-converter.ownerPassword": {
+          "notepdf.ownerPassword": {
             "type": "string",
             "default": "",
             "description": "%config.ownerPassword.description%"
           },
-          "ipynb-pdf-converter.coverPage": {
+          "notepdf.coverPage": {
             "type": "boolean",
             "default": false,
             "description": "%config.coverPage.description%"
           },
-          "ipynb-pdf-converter.coverTitle": {
+          "notepdf.coverTitle": {
             "type": "string",
             "default": "{file}",
             "description": "%config.coverTitle.description%"
           },
-          "ipynb-pdf-converter.coverSubtitle": {
+          "notepdf.coverSubtitle": {
             "type": "string",
             "default": "",
             "description": "%config.coverSubtitle.description%"
           },
-          "ipynb-pdf-converter.coverAuthor": {
+          "notepdf.coverAuthor": {
             "type": "string",
             "default": "",
             "description": "%config.coverAuthor.description%"
           },
-          "ipynb-pdf-converter.watermarkImage": {
+          "notepdf.watermarkImage": {
             "type": "string",
             "default": "",
             "description": "%config.watermarkImage.description%"
           },
-          "ipynb-pdf-converter.watermarkWidth": {
+          "notepdf.watermarkWidth": {
             "type": "number",
             "default": 100,
             "minimum": 10,
             "maximum": 2000,
             "description": "%config.watermarkWidth.description%"
           },
-          "ipynb-pdf-converter.allowRemoteImages": {
+          "notepdf.allowRemoteImages": {
             "type": "boolean",
             "default": true,
             "description": "%config.allowRemoteImages.description%"
           },
-          "ipynb-pdf-converter.renderTimeoutSeconds": {
+          "notepdf.renderTimeoutSeconds": {
             "type": "number",
             "default": 60,
             "minimum": 10,
             "maximum": 600,
             "description": "%config.renderTimeoutSeconds.description%"
           },
-          "ipynb-pdf-converter.teacherMode": {
+          "notepdf.teacherMode": {
             "type": "boolean",
             "default": false,
             "description": "%config.teacherMode.description%"
@@ -625,7 +625,7 @@
       {
         "title": "%note.config.title%",
         "properties": {
-          "ipynb-pdf-converter.note.paperSize": {
+          "notepdf.note.paperSize": {
             "type": "string",
             "default": "original",
             "enum": [
@@ -686,7 +686,7 @@
               "%note.config.paperSize.enum.25%"
             ]
           },
-          "ipynb-pdf-converter.note.layoutMode": {
+          "notepdf.note.layoutMode": {
             "type": "string",
             "default": "note",
             "enum": [
@@ -699,29 +699,29 @@
             ],
             "description": "%note.config.layoutMode.description%"
           },
-          "ipynb-pdf-converter.note.feedbackBannerImage": {
+          "notepdf.note.feedbackBannerImage": {
             "type": "string",
             "default": "",
             "description": "%note.config.feedbackBannerImage.description%"
           },
-          "ipynb-pdf-converter.note.lineGap": {
+          "notepdf.note.lineGap": {
             "type": "number",
             "default": 18,
             "minimum": 6,
             "maximum": 60,
             "description": "%note.config.lineGap.description%"
           },
-          "ipynb-pdf-converter.note.headerText": {
+          "notepdf.note.headerText": {
             "type": "string",
             "default": "{file}",
             "description": "%note.config.headerText.description%"
           },
-          "ipynb-pdf-converter.note.footerText": {
+          "notepdf.note.footerText": {
             "type": "string",
             "default": "{page} / {total}",
             "description": "%note.config.footerText.description%"
           },
-          "ipynb-pdf-converter.note.headerAlign": {
+          "notepdf.note.headerAlign": {
             "type": "string",
             "default": "left",
             "enum": [
@@ -731,7 +731,7 @@
             ],
             "description": "%note.config.headerAlign.description%"
           },
-          "ipynb-pdf-converter.note.footerAlign": {
+          "notepdf.note.footerAlign": {
             "type": "string",
             "default": "right",
             "enum": [
@@ -741,14 +741,14 @@
             ],
             "description": "%note.config.footerAlign.description%"
           },
-          "ipynb-pdf-converter.note.headerFooterFontSize": {
+          "notepdf.note.headerFooterFontSize": {
             "type": "number",
             "default": 10,
             "minimum": 6,
             "maximum": 24,
             "description": "%note.config.headerFooterFontSize.description%"
           },
-          "ipynb-pdf-converter.note.outputFileName": {
+          "notepdf.note.outputFileName": {
             "type": "string",
             "default": "{name}_note",
             "description": "%note.config.outputFileName.description%"

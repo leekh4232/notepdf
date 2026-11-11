@@ -4,6 +4,11 @@
 
 형식은 [Keep a Changelog](https://keepachangelog.com/ko/1.1.0/)를, 버전은 [유의적 버전](https://semver.org/lang/ko/)을 따릅니다.
 
+## [0.13.0] - 2026-11-11
+
+### 변경
+- **설정 이름 앞부분을 `ipynb-pdf-converter.`에서 `notepdf.`로 바꿨습니다.** 예: `ipynb-pdf-converter.pdfTheme` → `notepdf.pdfTheme`, `ipynb-pdf-converter.note.lineGap` → `notepdf.note.lineGap`. 설정 항목과 기본값은 그대로입니다. 예전 이름으로 저장해 둔 값(사용자 · 작업 영역 설정)은 업데이트 후 처음 실행할 때 새 이름으로 자동으로 옮기고 예전 항목은 지웁니다. 작업 영역 폴더별 설정(`.vscode/settings.json`이 여러 폴더에 있는 다중 루트)과 언어별 설정은 옮기지 않으니 직접 이름을 바꿔 주세요. 확장 ID(`leekh.ipynb-pdf-converter`)와 명령 ID는 그대로입니다.
+
 ## [0.12.2] - 2026-11-11
 
 ### 수정

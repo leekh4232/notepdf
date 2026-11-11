@@ -59,7 +59,7 @@ export type ImageFormat = (typeof IMAGE_FORMATS)[number];
 export type Alignment = (typeof ALIGNMENTS)[number];
 export type Permission = (typeof PERMISSIONS)[number];
 
-// Everything under ipynb-pdf-converter.* except pdfPassword, which only the
+// Everything under notepdf.* except pdfPassword, which only the
 // "with Password" command reads.
 export interface Settings {
   pdfTheme: string;
@@ -282,7 +282,7 @@ export function activate(context: vscode.ExtensionContext): void {
 
   registerNoteCommands(context, outputChannel, async (filePath, token, onProgress) => {
     const settings = {
-      ...readSettings(vscode.workspace.getConfiguration('ipynb-pdf-converter')),
+      ...readSettings(vscode.workspace.getConfiguration('notepdf')),
       headerText: '',
       footerText: '',
     };
@@ -292,7 +292,39 @@ export function activate(context: vscode.ExtensionContext): void {
     return buffer;
   });
 
+  void migrateSettings(context);
   void offerAutoUpdate(context);
+}
+
+// Settings were named ipynb-pdf-converter.* up to 0.12.x. Move any value the
+// user set there to notepdf.* (unless the new name is already set) and drop
+// the old entry, so an update keeps their configuration.
+async function migrateSettings(context: vscode.ExtensionContext): Promise<void> {
+  const oldConfig = vscode.workspace.getConfiguration('ipynb-pdf-converter');
+  const newConfig = vscode.workspace.getConfiguration('notepdf');
+  const sections: { properties: Record<string, unknown> }[] = context.extension.packageJSON.contributes.configuration;
+  const keys = sections.flatMap((section) => Object.keys(section.properties)).map((name) => name.slice('notepdf.'.length));
+  const targets = [
+    [vscode.ConfigurationTarget.Global, 'globalValue'],
+    [vscode.ConfigurationTarget.Workspace, 'workspaceValue'],
+  ] as const;
+  for (const key of keys) {
+    const oldValues = oldConfig.inspect(key);
+    const newValues = newConfig.inspect(key);
+    for (const [target, field] of targets) {
+      if (oldValues?.[field] === undefined) {
+        continue;
+      }
+      try {
+        if (newValues?.[field] === undefined) {
+          await newConfig.update(key, oldValues[field], target);
+        }
+        await oldConfig.update(key, undefined, target);
+      } catch (error) {
+        outputChannel.appendLine(`⚠️ Could not migrate setting ${key}: ${error instanceof Error ? error.message : error}`);
+      }
+    }
+  }
 }
 
 // Whether an extension auto-updates is the user's VS Code setting
@@ -327,14 +359,14 @@ async function offerAutoUpdate(context: vscode.ExtensionContext): Promise<void> 
 // it is empty. The plain command never encrypts, even if a default is set.
 async function resolvePassword(): Promise<string | undefined> {
   const configured = vscode.workspace
-    .getConfiguration('ipynb-pdf-converter')
+    .getConfiguration('notepdf')
     .get<string>('pdfPassword', '');
   if (configured) {
     return configured;
   }
   return vscode.window.showInputBox({
     title: 'PDF Password',
-    prompt: 'No default password is set (ipynb-pdf-converter.pdfPassword). Enter a password for this PDF.',
+    prompt: 'No default password is set (notepdf.pdfPassword). Enter a password for this PDF.',
     password: true,
     ignoreFocusOut: true,
     validateInput: (value) => (value ? undefined : 'Password cannot be empty'),
@@ -349,7 +381,7 @@ async function convertFilesToPdf(
   password?: string,
   mark?: Mark
 ): Promise<void> {
-  const settings = readSettings(vscode.workspace.getConfiguration('ipynb-pdf-converter'));
+  const settings = readSettings(vscode.workspace.getConfiguration('notepdf'));
   const batch = filePaths.length > 1;
   const results: ConversionResult[] = [];
 

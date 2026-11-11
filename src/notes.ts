@@ -169,13 +169,13 @@ function resolveActiveUri(): vscode.Uri | undefined {
 
 // Same rule as the converter: the configured default, else a prompt.
 async function resolvePassword(): Promise<string | undefined> {
-  const configured = vscode.workspace.getConfiguration('ipynb-pdf-converter').get<string>('pdfPassword', '');
+  const configured = vscode.workspace.getConfiguration('notepdf').get<string>('pdfPassword', '');
   if (configured) {
     return configured;
   }
   return vscode.window.showInputBox({
     title: vscode.l10n.t('PDF Password'),
-    prompt: vscode.l10n.t('No default password is set (ipynb-pdf-converter.pdfPassword). Enter a password for this PDF.'),
+    prompt: vscode.l10n.t('No default password is set (notepdf.pdfPassword). Enter a password for this PDF.'),
     password: true,
     ignoreFocusOut: true,
     validateInput: (value) => (value ? undefined : vscode.l10n.t('Password cannot be empty')),
@@ -192,7 +192,7 @@ async function runAll(
   password: string | undefined,
   mark: Mark | undefined
 ): Promise<void> {
-  const settings = readSettings(vscode.workspace.getConfiguration('ipynb-pdf-converter'));
+  const settings = readSettings(vscode.workspace.getConfiguration('notepdf'));
   const batch = filePaths.length > 1;
   const results: RunResult[] = [];
   outputChannel.clear();
@@ -316,7 +316,7 @@ async function addNotesToFile(
             warn(vscode.l10n.t('Feedback banner not loaded ({0}): {1}', settings.feedbackBannerImage, messageOf(error)));
             return null;
           })
-        : (warn(vscode.l10n.t('Feedback mode: no banner configured (ipynb-pdf-converter.note.feedbackBannerImage); drawing the divider only')), null)
+        : (warn(vscode.l10n.t('Feedback mode: no banner configured (notepdf.note.feedbackBannerImage); drawing the divider only')), null)
       : null;
   const markImage = mark
     ? await loadImage(MARK_IMAGES[mark], sourceDir).catch((error) => {

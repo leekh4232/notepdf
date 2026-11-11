@@ -1,7 +1,7 @@
 {
   "Please select a .pdf, .ipynb or .md file": ".pdf, .ipynb 또는 .md 파일을 선택하세요",
   "PDF Password": "PDF 비밀번호",
-  "No default password is set (ipynb-pdf-converter.pdfPassword). Enter a password for this PDF.": "기본 비밀번호(ipynb-pdf-converter.pdfPassword)가 설정되지 않았습니다. 이 PDF에 걸 비밀번호를 입력하세요.",
+  "No default password is set (notepdf.pdfPassword). Enter a password for this PDF.": "기본 비밀번호(notepdf.pdfPassword)가 설정되지 않았습니다. 이 PDF에 걸 비밀번호를 입력하세요.",
   "Password cannot be empty": "비밀번호를 입력하세요",
   "{0} → note PDF": "{0} → 노트 PDF",
   "Adding note area to {0}": "{0}에 필기 영역 추가 중",
@@ -13,7 +13,7 @@
   "Reading PDF…": "PDF 읽는 중…",
   "Converting to PDF…": "PDF로 변환 중…",
   "Feedback banner not loaded ({0}): {1}": "피드백 배너를 불러오지 못했습니다({0}): {1}",
-  "Feedback mode: no banner configured (ipynb-pdf-converter.note.feedbackBannerImage); drawing the divider only": "피드백 모드: 배너(ipynb-pdf-converter.note.feedbackBannerImage)가 설정되지 않아 분리선만 그립니다",
+  "Feedback mode: no banner configured (notepdf.note.feedbackBannerImage); drawing the divider only": "피드백 모드: 배너(notepdf.note.feedbackBannerImage)가 설정되지 않아 분리선만 그립니다",
   "Instructor mark not loaded ({0}): {1}": "강사 마크를 불러오지 못했습니다({0}): {1}",
   "Teacher mode: {0} mark on every page": "강사 모드: 모든 페이지에 {0} 마크",
   "Bundled font missing (media/fonts/NanumGothic.ttf). Reinstall the NotePDF extension.": "내장 글꼴(media/fonts/NanumGothic.ttf)이 없습니다. NotePDF 확장을 다시 설치하세요.",
