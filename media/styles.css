@@ -95,6 +95,13 @@ html, body {
   display: none !important;
 }
 
+/* Fenced code in Markdown — the code theme's colours, like code cells */
+.markdown-body pre.hljs {
+  background: var(--code-bg, #282936);
+  color: var(--code-fg, #f8f8f2);
+  border: 1px solid var(--code-border, #44475a);
+}
+
 /* Code cell input — theme-driven via CSS variables */
 .jp-InputArea-editor {
   display: flex;

@@ -17,6 +17,17 @@ marked.setOptions({
   breaks: false,
 });
 
+// Fenced blocks get the same highlight.js markup as notebook code cells, so the
+// code theme colours them. An unknown or missing language is only escaped.
+marked.use({
+  renderer: {
+    code(code: string, infostring: string | undefined): string {
+      const language = (infostring ?? '').trim().split(/\s+/)[0].toLowerCase();
+      return `<pre class="hljs"><code>${highlightCode(code.replace(/\n$/, ''), language)}</code></pre>\n`;
+    },
+  },
+});
+
 // eslint-disable-next-line no-control-regex
 const ANSI_SGR = /\x1b\[([0-9;]*)m/g;
 
