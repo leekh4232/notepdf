@@ -4,6 +4,19 @@
 
 형식은 [Keep a Changelog](https://keepachangelog.com/ko/1.1.0/)를, 버전은 [유의적 버전](https://semver.org/lang/ko/)을 따릅니다.
 
+## [0.14.0] - 2026-11-12
+
+### 변경
+- **`teacherMode`의 hossam · jussam 명령을 하나로 합쳤습니다.** 변환과 필기 영역 추가 메뉴에 각각 `(hossam)` · `(hossam, 비밀번호)` · `(jussam)` · `(jussam, 비밀번호)` 네 개씩 있던 것이 **(강사 마크)** · **(강사 마크, 비밀번호)** 두 개씩으로 줄었습니다. 명령을 실행하면 팝업에서 **호쌤 · 쭈쌤 · 통합** 중 하나를 고릅니다. 여러 파일을 선택했으면 한 번만 묻습니다. 비밀번호 규칙은 그대로입니다.
+- **`light` · `dark` 페이지 테마의 좌우 여백을 줄였습니다.** 페이지 여백 안쪽에 더하던 본문 좌우 여백이 30 px에서 7 px가 되어, 기본 설정(`pdfPageMargin` `48`)에서 좌우 여백이 78 px에서 55 px(약 70%)로 줄고 본문이 그만큼 넓어집니다. 위아래 여백과 `default` 테마는 그대로입니다.
+- 강사 마크 그림을 바꿨습니다. 호쌤은 이광호 강사, 쭈쌤은 주영아 강사, 통합은 두 강사가 함께 적힌 마크입니다. 확장에 들어 있어 인터넷 연결 없이 그려지고, 높이 20 px로 모든 페이지 우측 상단(페이지 여백 안쪽 끝)에 머릿말 대신 표시됩니다.
+
+### 수정
+- 변환하는 동안 미리보기 창을 스크롤하면 그 뒤에 캡처한 페이지의 그림이 스크롤한 만큼 밀려, 내용이 잘리고 PDF 끝에 빈 페이지가 생기던 문제를 고쳤습니다.
+
+### 제거
+- 명령 `convertToPdfHossam` · `convertToPdfHossamWithPassword` · `convertToPdfJussam` · `convertToPdfJussamWithPassword` · `addNotesHossam` · `addNotesHossamWithPassword` · `addNotesJussam` · `addNotesJussamWithPassword`. 대신 `convertToPdfTeacher` · `convertToPdfTeacherWithPassword` · `addNotesTeacher` · `addNotesTeacherWithPassword`를 씁니다. 예전 명령에 단축키를 걸어 두었다면 새 명령 ID로 바꿔 주세요.
+
 ## [0.13.0] - 2026-11-11
 
 ### 변경

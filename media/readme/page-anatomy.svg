@@ -10,7 +10,7 @@
   <!-- header / footer in the band -->
   <text x="284" y="46" text-anchor="end" font-size="9" fill="#8c96a8">notebook.ipynb</text>
   <text x="284" y="407" text-anchor="end" font-size="9" fill="#8c96a8">3 / 12</text>
-  <text x="44" y="407" font-size="8" fill="#8c96a8">여백 48 px · 본문 여백 +30 px (light · dark)</text>
+  <text x="44" y="407" font-size="8" fill="#8c96a8">여백 48 px · 본문 좌우 +7 px (light · dark)</text>
 
   <!-- watermark / teacher mark slot -->
   <rect x="238" y="70" width="36" height="26" rx="3" fill="#fbfcfe" stroke="#9aa6c2" stroke-dasharray="3 2"/>
@@ -64,7 +64,7 @@
     <circle cx="348" cy="83" r="4" fill="#f6bb42"/>
     <text x="360" y="87" font-size="13" font-weight="700" fill="#24292f">워터마크 · 강사 마크</text>
     <text x="360" y="104">watermarkImage (첫 페이지) · teacherMode (모든 페이지)</text>
-    <text x="360" y="120">우측 상단 · 폭 100 px · 강사 마크는 머릿말 대신 표시</text>
+    <text x="360" y="120">우측 상단 · 강사 마크는 머릿말 대신 표시 (높이 20 px)</text>
 
     <circle cx="348" cy="147" r="4" fill="#1d222a"/>
     <text x="360" y="151" font-size="13" font-weight="700" fill="#24292f">코드 셀 · codeTheme</text>

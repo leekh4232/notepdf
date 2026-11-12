@@ -6,16 +6,10 @@ import { promises as fs } from 'fs';
 import { fileURLToPath } from 'url';
 import { addNoteArea, loadSource, permissionFlags, resolvePaper, setTranslator, Align, SourceEncryptedError, WrongPasswordError } from './note';
 import type { PDFDocument } from '@cantoo/pdf-lib';
+import { Mark, MARK_HEIGHT, markLabel, markPath, pickMark } from './marks';
 
 const SUPPORTED = ['.pdf', '.ipynb', '.md'];
 
-// Teacher mode marks (nb_convert.py --ssam), drawn in place of the header text.
-type Mark = 'ho' | 'ju';
-const MARK_IMAGES: Record<Mark, string> = {
-  ho: 'https://data.hossam.kr/itwill-ho.png',
-  ju: 'https://data.hossam.kr/itwill-ju.png',
-};
-const MARK_WIDTH = 100;
 
 const ALIGNMENTS = ['left', 'center', 'right'] as const;
 const PERMISSIONS = ['print', 'modify', 'copy', 'annot-forms'] as const;
@@ -110,13 +104,12 @@ class CancelledError extends Error {
   }
 }
 
-const COMMANDS: { id: string; withPassword: boolean; mark?: Mark }[] = [
+// The teacher commands (marks.ts) ask for an instructor mark first.
+const COMMANDS: { id: string; withPassword: boolean; teacher?: boolean }[] = [
   { id: 'ipynb-pdf-converter.addNotes', withPassword: false },
   { id: 'ipynb-pdf-converter.addNotesWithPassword', withPassword: true },
-  { id: 'ipynb-pdf-converter.addNotesHossam', withPassword: false, mark: 'ho' },
-  { id: 'ipynb-pdf-converter.addNotesHossamWithPassword', withPassword: true, mark: 'ho' },
-  { id: 'ipynb-pdf-converter.addNotesJussam', withPassword: false, mark: 'ju' },
-  { id: 'ipynb-pdf-converter.addNotesJussamWithPassword', withPassword: true, mark: 'ju' },
+  { id: 'ipynb-pdf-converter.addNotesTeacher', withPassword: false, teacher: true },
+  { id: 'ipynb-pdf-converter.addNotesTeacherWithPassword', withPassword: true, teacher: true },
 ];
 
 // Renders an .ipynb/.md to PDF bytes without its own header/footer; this
@@ -134,7 +127,7 @@ export function registerNoteCommands(context: vscode.ExtensionContext, channel: 
   convertToBytes = convert;
   // UI strings follow the VS Code display language (l10n/bundle.l10n.*.json).
   setTranslator(vscode.l10n.t);
-  for (const { id, withPassword, mark } of COMMANDS) {
+  for (const { id, withPassword, teacher } of COMMANDS) {
     context.subscriptions.push(
       vscode.commands.registerCommand(id, async (arg?: unknown, selected?: unknown) => {
         // The explorer passes the clicked Uri plus every selected Uri; other
@@ -151,7 +144,11 @@ export function registerNoteCommands(context: vscode.ExtensionContext, channel: 
           vscode.window.showErrorMessage(vscode.l10n.t('Please select a .pdf, .ipynb or .md file'));
           return;
         }
-        // One password for the whole selection.
+        // One mark and one password for the whole selection.
+        const mark = teacher ? await pickMark() : undefined;
+        if (teacher && mark === undefined) {
+          return; // prompt dismissed
+        }
         const password = withPassword ? await resolvePassword() : undefined;
         if (withPassword && password === undefined) {
           return; // prompt dismissed
@@ -319,13 +316,13 @@ async function addNotesToFile(
         : (warn(vscode.l10n.t('Feedback mode: no banner configured (notepdf.note.feedbackBannerImage); drawing the divider only')), null)
       : null;
   const markImage = mark
-    ? await loadImage(MARK_IMAGES[mark], sourceDir).catch((error) => {
-        warn(vscode.l10n.t('Instructor mark not loaded ({0}): {1}', MARK_IMAGES[mark], messageOf(error)));
+    ? await loadImage(markPath(context, mark), sourceDir).catch((error) => {
+        warn(vscode.l10n.t('Instructor mark not loaded ({0}): {1}', markPath(context, mark), messageOf(error)));
         return null;
       })
     : null;
   if (mark && markImage) {
-    outputChannel.appendLine(`🖼️ ${vscode.l10n.t('Teacher mode: {0} mark on every page', mark === 'ho' ? 'hossam' : 'jussam')}`);
+    outputChannel.appendLine(`🖼️ ${vscode.l10n.t('Teacher mode: {0} mark on every page', markLabel(mark))}`);
   }
   if (!fontCache) {
     const fontPath = context.asAbsolutePath(path.join('media', 'fonts', 'NanumGothic.ttf'));
@@ -358,7 +355,7 @@ async function addNotesToFile(
     lineGap: settings.lineGap,
     banner,
     mark: markImage,
-    markWidth: MARK_WIDTH,
+    markHeight: MARK_HEIGHT,
     onProgress: (done, total) => {
       if (token.isCancellationRequested) throw new CancelledError();
       report(vscode.l10n.t('Adding note areas… ({0}/{1})', done, total), base + (done / total) * (0.9 - base));

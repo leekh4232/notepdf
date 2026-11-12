@@ -10,6 +10,7 @@ import { resolvePageDimensions } from './paper';
 import { inlineImages, loadAsDataUrl } from './images';
 import { permissionFlags } from './note';
 import { registerNoteCommands } from './notes';
+import { Mark, MARK_HEIGHT, markLabel, markPath, pickMark } from './marks';
 
 let outputChannel: vscode.OutputChannel;
 
@@ -233,29 +234,19 @@ function localDate(): string {
 // Commands
 // ---------------------------------------------------------------------------
 
-// Teacher mode (nb_convert.py's --ssam): an instructor mark drawn at the top
-// right of every page instead of the header text. The menus show these
-// commands only while the teacherMode setting is on.
-type Mark = 'ho' | 'ju';
-const MARK_IMAGES: Record<Mark, string> = {
-  ho: 'https://data.hossam.kr/itwill-ho.png',
-  ju: 'https://data.hossam.kr/itwill-ju.png',
-};
-const MARK_WIDTH = 100;
-
-const COMMANDS: { id: string; withPassword: boolean; mark?: Mark }[] = [
+// The teacher commands (marks.ts) ask for an instructor mark first. The menus
+// show them only while the teacherMode setting is on.
+const COMMANDS: { id: string; withPassword: boolean; teacher?: boolean }[] = [
   { id: 'ipynb-pdf-converter.convertToPdf', withPassword: false },
   { id: 'ipynb-pdf-converter.convertToPdfWithPassword', withPassword: true },
-  { id: 'ipynb-pdf-converter.convertToPdfHossam', withPassword: false, mark: 'ho' },
-  { id: 'ipynb-pdf-converter.convertToPdfHossamWithPassword', withPassword: true, mark: 'ho' },
-  { id: 'ipynb-pdf-converter.convertToPdfJussam', withPassword: false, mark: 'ju' },
-  { id: 'ipynb-pdf-converter.convertToPdfJussamWithPassword', withPassword: true, mark: 'ju' },
+  { id: 'ipynb-pdf-converter.convertToPdfTeacher', withPassword: false, teacher: true },
+  { id: 'ipynb-pdf-converter.convertToPdfTeacherWithPassword', withPassword: true, teacher: true },
 ];
 
 export function activate(context: vscode.ExtensionContext): void {
   outputChannel = vscode.window.createOutputChannel('NotePDF');
 
-  for (const { id, withPassword, mark } of COMMANDS) {
+  for (const { id, withPassword, teacher } of COMMANDS) {
     context.subscriptions.push(
       vscode.commands.registerCommand(id, async (arg?: unknown, selected?: unknown) => {
         // The explorer passes the clicked Uri plus every selected Uri; other
@@ -270,7 +261,11 @@ export function activate(context: vscode.ExtensionContext): void {
           vscode.window.showErrorMessage('Please select a .ipynb or .md file');
           return;
         }
-        // One password for the whole selection.
+        // One mark and one password for the whole selection.
+        const mark = teacher ? await pickMark() : undefined;
+        if (teacher && mark === undefined) {
+          return; // prompt dismissed
+        }
         const password = withPassword ? await resolvePassword() : undefined;
         if (withPassword && password === undefined) {
           return; // prompt dismissed
@@ -521,15 +516,14 @@ async function producePdf(
     outputChannel.appendLine(`⚠️ ${warning}`);
   });
 
-  // The mark is fetched on purpose, so allowRemoteImages does not apply.
   let markImage: string | undefined;
   if (mark) {
     try {
-      markImage = await loadAsDataUrl(MARK_IMAGES[mark], sourceDir);
-      outputChannel.appendLine(`🖼️ Teacher mode: ${mark === 'ho' ? 'hossam' : 'jussam'} mark on every page`);
+      markImage = await loadAsDataUrl(markPath(context, mark), sourceDir);
+      outputChannel.appendLine(`🖼️ Teacher mode: ${markLabel(mark)} mark on every page`);
     } catch (error) {
       outputChannel.appendLine(
-        `⚠️ Instructor mark not available (${MARK_IMAGES[mark]}): ${error instanceof Error ? error.message : String(error)}`
+        `⚠️ Instructor mark not available (${markPath(context, mark)}): ${error instanceof Error ? error.message : String(error)}`
       );
     }
   }
@@ -844,7 +838,7 @@ export async function buildCaptureHtml(
       footer: { text: expandPlaceholders(settings.footerText, vars), align: settings.footerAlign },
       runningFontPx: settings.headerFooterFontSize,
       breakBeforeSelector,
-      mark: markImage ? { image: markImage, width: MARK_WIDTH } : null,
+      mark: markImage ? { image: markImage, height: MARK_HEIGHT } : null,
     },
   });
 }
@@ -861,7 +855,7 @@ interface WebviewConfig {
   footer: { text: string; align: Alignment };
   runningFontPx: number;
   breakBeforeSelector: string;
-  mark: { image: string; width: number } | null;
+  mark: { image: string; height: number } | null;
 }
 
 function buildWebviewHtml(params: {
@@ -1060,8 +1054,8 @@ function buildWebviewHtml(params: {
     if (markImg) {
       // Right-aligned to the content edge, centred in the top margin band and
       // shrunk if the band is too thin; it takes the header's place.
-      let w = cfg.mark.width * scale;
-      let h = (w * markImg.naturalHeight) / markImg.naturalWidth;
+      let h = cfg.mark.height * scale;
+      let w = (h * markImg.naturalWidth) / markImg.naturalHeight;
       const maxH = Math.max(M - 4 * scale, 1);
       if (h > maxH) {
         w = (w * maxH) / h;
@@ -1191,6 +1185,10 @@ function buildWebviewHtml(params: {
     const boxes = collectKeepTogether(target);
     const forced = forcedBreaks(target, boxes);
     const rect = target.getBoundingClientRect();
+    // Document position of the root, fixed now: the chunks are captured one
+    // after another, and scrolling the view meanwhile must not move them.
+    const originX = rect.left + window.scrollX;
+    const originY = rect.top + window.scrollY;
     const cuts = computeCuts(rect.height, contentH, boxes, forced);
     if (cuts.length === 0) cuts.push([0, 1]); // empty document: still one page
     const chunks = groupCuts(cuts, MAX_CHUNK_PX / scale);
@@ -1209,8 +1207,8 @@ function buildWebviewHtml(params: {
             logging: false,
             windowWidth: target.scrollWidth,
             windowHeight: target.scrollHeight,
-            x: rect.left + window.scrollX,
-            y: rect.top + window.scrollY + chunk.top,
+            x: originX,
+            y: originY + chunk.top,
             width: Math.ceil(rect.width),
             height: Math.ceil(chunk.bottom - chunk.top),
           })

@@ -59,7 +59,7 @@ ext install leekh.ipynb-pdf-converter
    |:--|:--|:--|
    | 노트북/마크다운을 PDF로 변환 | Convert Notebook/Markdown to PDF | 비밀번호 없이 변환. 설정에 기본 비밀번호가 있어도 쓰지 않음 |
    | … (비밀번호) | … (with Password) | 설정의 기본 비밀번호로 암호화. 비어 있으면 팝업으로 입력. 여러 파일이면 한 번만 묻고 모든 PDF에 같은 비밀번호를 씀 |
-   | … (hossam) · … (jussam) | 같음 | `teacherMode`를 켜면 추가. 강사 마크를 모든 페이지 우측 상단에 넣음(비밀번호 유무 각각) |
+   | … (강사 마크) · … (강사 마크, 비밀번호) | … (Teacher) · … (Teacher, with Password) | `teacherMode`를 켜면 추가. 팝업에서 호쌤 · 쭈쌤 · 통합 중 하나를 골라 그 강사 마크를 모든 페이지 우측 상단에 넣음 |
 
 3. 같은 폴더에 `.pdf`가 생깁니다. 같은 이름이 있으면 `이름 (1).pdf`, `이름 (2).pdf`처럼 번호를 붙이고 덮어쓰지 않습니다.
 
@@ -71,7 +71,7 @@ ext install leekh.ipynb-pdf-converter
 |:--|:--|:--|
 | 필기 영역 추가 (PDF) | Add Note Area (PDF) | 비밀번호 없이 |
 | 필기 영역 추가 (PDF, 비밀번호) | Add Note Area (PDF, with Password) | 변환과 같은 규칙. 여러 파일이면 한 번만 묻고 모든 PDF에 같은 비밀번호를 씀. 비밀번호 걸린 원본은 파일마다 물어봄 |
-| 필기 영역 추가 (hossam) · (jussam) | Add Note Area (hossam) · (jussam) | `teacherMode`를 켜면 추가. 강사 마크를 넣음(비밀번호 유무 각각) |
+| 필기 영역 추가 (강사 마크) · (강사 마크, 비밀번호) | Add Note Area (Teacher) · (Teacher, with Password) | `teacherMode`를 켜면 추가. 팝업에서 호쌤 · 쭈쌤 · 통합 중 하나를 골라 그 강사 마크를 넣음 |
 
 같은 폴더에 `원본이름_note.pdf`가 생깁니다. 이 명령의 알림 · 진행률 · 로그는 VS Code 표시 언어를 따릅니다.
 
@@ -115,7 +115,7 @@ ext install leekh.ipynb-pdf-converter
 | `codeTheme` | `mdr-dark` | `nb_convert.py --code-theme dark`와 동일. `mdr-light` · `dracula` · `github` · `github-dark` · `atom-one-light` · `atom-one-dark` · `monokai` · `nord` · `vs2015` · `leekh`(`default` 테마에서 제목·표·출력까지 A4 인쇄 스타일로) |
 | `pdfPageSize` | `A4` | `A3` · `A5` · `B4`(JIS 257×364 mm) · `B5`(JIS 182×257 mm) · `Letter` · `Legal` · `Widescreen`(16:9 슬라이드, 가로 방향과 함께) · 태블릿 `iPadPro13` · `iPadPro11` · `iPadAir13` · `iPad11`(iPad/iPad Air 11") · `iPadMini` · `GalaxyTabS11`(11") · `GalaxyTabS11Ultra`(S11 Ultra/S12 Ultra). 태블릿은 화면의 논리 크기(CSS px, 예: Galaxy Tab S11 = 800×1280)라 100%에서 화면에 꽉 참 |
 | `pdfPageOrientation` | `portrait` | `landscape` |
-| `pdfPageMargin` | `48` | 페이지 여백(CSS px, 48 = 0.5 in). `light` · `dark`는 그 안쪽에 본문 여백 30 px를 더함(좌우는 모든 페이지, 위아래는 문서 처음·끝) |
+| `pdfPageMargin` | `48` | 페이지 여백(CSS px, 48 = 0.5 in). `light` · `dark`는 그 안쪽에 본문 여백을 더함(좌우 7 px는 모든 페이지, 위아래 30 px는 문서 처음·끝) |
 
 </details>
 
@@ -226,7 +226,7 @@ ext install leekh.ipynb-pdf-converter
 |:--|:--|:--|
 | `allowRemoteImages` | `true` | 문서가 참조하는 http(s) 이미지 내려받기 |
 | `renderTimeoutSeconds` | `60` | 웹뷰 렌더링 제한 시간. 긴 노트북이면 올리기 |
-| `teacherMode` | `false` | 우클릭 메뉴·명령 팔레트에 `(hossam)` · `(hossam, 비밀번호)` · `(jussam)` · `(jussam, 비밀번호)` 변환 · 필기 영역 추가 명령 추가. `nb_convert.py --ssam`처럼 강사 마크(`https://data.hossam.kr/itwill-ho.png` / `itwill-ju.png`, 폭 100 px)를 모든 페이지 우측 상단 여백에 그리며, 이때 `headerText`는 표시하지 않음(꼬릿말은 유지) |
+| `teacherMode` | `false` | 우클릭 메뉴·명령 팔레트에 `(강사 마크)` · `(강사 마크, 비밀번호)` 변환 · 필기 영역 추가 명령 추가. 실행하면 팝업에서 호쌤 · 쭈쌤 · 통합 중 하나를 고르고, 고른 강사 마크(높이 20 px)를 모든 페이지 우측 상단 여백에 오른쪽 끝을 본문에 맞춰 그리며, 이때 `headerText`는 표시하지 않음(꼬릿말은 유지) |
 
 </details>
 

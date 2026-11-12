@@ -24,12 +24,14 @@ body,
 }
 /* body { margin: 30px } in the script: inside the page margin, so it shows only
    at the very top and bottom of the document and on both sides of every page.
+   The sides are narrowed to 7px: with the default 48px page margin that is
+   55px, about 70% of the script's 78px.
    The vertical part is a margin on the article so the first heading's own
    margin collapses into it as in WeasyPrint; flow-root keeps it inside the
    captured box. */
 #capture-root {
   display: flow-root;
-  padding: 0 30px;
+  padding: 0 7px;
 }
 .mdr-content {
   margin: 30px 0;

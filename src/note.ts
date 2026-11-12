@@ -79,7 +79,7 @@ export interface NoteOptions {
   lineGap: number; // reference pt (18)
   banner: ImageBytes | null; // feedback mode, landscape pages only
   mark: ImageBytes | null; // teacher mode: replaces the header text
-  markWidth: number; // reference pt (100)
+  markHeight: number; // reference pt (20)
   onProgress?: (done: number, total: number) => void;
 }
 
@@ -311,8 +311,8 @@ function buildNotePage(
     const zone = headerH + margin;
     const zoneBottom = pageH - zone;
     if (assets.mark) {
-      let mw = o.markWidth * scale;
-      let mh = (mw * assets.mark.height) / assets.mark.width;
+      let mh = o.markHeight * scale;
+      let mw = (mh * assets.mark.width) / assets.mark.height;
       const maxH = Math.max(zone - 2, 1);
       if (mh > maxH) {
         mw = (mw * maxH) / mh;

@@ -43,5 +43,6 @@
   "Note PDFs created for {0} of {1} files (password protected)": "{1}개 중 {0}개 파일의 노트 PDF를 만들었습니다(비밀번호 보호)",
   ", {0} failed": ", {0}개 실패",
   ", {0} skipped after cancel": ", 취소로 {0}개 건너뜀",
-  ", {0} with warnings": ", {0}개 경고"
+  ", {0} with warnings": ", {0}개 경고",
+  "Select the instructor mark to draw in the header": "머릿말에 넣을 강사 마크를 선택하세요"
 }
