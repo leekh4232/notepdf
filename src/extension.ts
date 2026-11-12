@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import { promises as fs } from 'fs';
-import { PDFDocument, PDFFont, PDFPage, TextRenderingMode, popGraphicsState, pushGraphicsState, setCharacterSqueeze } from '@cantoo/pdf-lib';
+import { PDFDict, PDFDocument, PDFFont, PDFHexString, PDFName, PDFPage, PDFRef, TextRenderingMode, popGraphicsState, pushGraphicsState, setCharacterSqueeze } from '@cantoo/pdf-lib';
 import fontkit from '@cantoo/fontkit';
 import { renderNotebook, renderMarkdown } from './render';
 import { Notebook } from './notebook';
@@ -538,7 +538,7 @@ async function producePdf(
   );
   report('Capturing pages…', 0.1);
   // The webview reports each captured chunk; capture spans 10%..85%.
-  const { pages, texts } = await captureInWebview(context, { bodyHtml, settings, vars, markImage }, token, (done, total) =>
+  const { pages, texts, outline } = await captureInWebview(context, { bodyHtml, settings, vars, markImage }, token, (done, total) =>
     report(`Capturing pages… (${done}/${total})`, 0.1 + (done / total) * 0.75)
   );
 
@@ -548,6 +548,7 @@ async function producePdf(
   );
   const buffer = await generatePdfFromPages(pages, texts, layout.widthPx, layout.heightPx, {
     fontBytes: await readTextFont(context),
+    outline,
     password,
     ownerPassword: settings.ownerPassword,
     permissions: settings.pdfPermissions,
@@ -652,9 +653,18 @@ export interface TextRun {
   fs: number; // font size
 }
 
+// A heading (h1-h6) of the document, for the PDF outline (bookmarks).
+export interface OutlineItem {
+  level: number; // 1..6
+  title: string;
+  page: number; // 0-based page index
+  y: number; // CSS px from the top of that page
+}
+
 export interface CaptureResult {
   pages: string[]; // one image data: URL per page
   texts: TextRun[][]; // the text drawn on each page, for the invisible text layer
+  outline: OutlineItem[]; // the headings in document order
 }
 
 let textFontCache: Uint8Array | undefined;
@@ -725,7 +735,8 @@ async function captureInWebview(
         } else if (msg?.type === 'result') {
           const pages = msg.pages as string[];
           const texts = (msg.texts as TextRun[][] | undefined) ?? pages.map(() => []);
-          finish(() => resolve({ pages, texts }));
+          const outline = (msg.outline as OutlineItem[] | undefined) ?? [];
+          finish(() => resolve({ pages, texts, outline }));
         } else if (msg?.type === 'error') {
           finish(() => reject(new Error(String(msg.message ?? 'Unknown webview error'))));
         }
@@ -1179,6 +1190,23 @@ function buildWebviewHtml(params: {
     return runs;
   }
 
+  // The headings (h1-h6) for the PDF outline, each with the page it lands on
+  // and its distance from the top of that page. The cover title is left out.
+  function collectOutline(root, cuts) {
+    const rootTop = root.getBoundingClientRect().top;
+    const items = [];
+    root.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach((el) => {
+      const r = el.getBoundingClientRect();
+      const title = (el.textContent || '').replace(/\\s+/g, ' ').trim();
+      if (!title || r.height <= 0 || el.closest('.pdf-cover')) return;
+      const mid = r.top + r.height / 2 - rootTop;
+      let page = cuts.findIndex((c) => mid >= c[0] && mid < c[1]);
+      if (page < 0) page = cuts.length - 1;
+      items.push({ level: Number(el.tagName.charAt(1)), title: title, page: page, y: cfg.margin + r.top - rootTop - cuts[page][0] });
+    });
+    return items;
+  }
+
   function capture() {
     const target = document.getElementById('capture-root');
     const runs = collectTextRuns(target);
@@ -1191,6 +1219,7 @@ function buildWebviewHtml(params: {
     const originY = rect.top + window.scrollY;
     const cuts = computeCuts(rect.height, contentH, boxes, forced);
     if (cuts.length === 0) cuts.push([0, 1]); // empty document: still one page
+    const outline = collectOutline(target, cuts);
     const chunks = groupCuts(cuts, MAX_CHUNK_PX / scale);
     const pages = [];
     const texts = [];
@@ -1224,7 +1253,7 @@ function buildWebviewHtml(params: {
     }
     chain
       .then(() => {
-        vscode.postMessage({ type: 'result', pages, texts, debug: { forced, cuts, chunks: chunks.length } });
+        vscode.postMessage({ type: 'result', pages, texts, outline, debug: { forced, cuts, chunks: chunks.length } });
       })
       .catch((err) => {
         vscode.postMessage({ type: 'error', message: String(err && err.message || err) });
@@ -1374,7 +1403,13 @@ export async function generatePdfFromPages(
   texts: TextRun[][],
   pageWidthCss: number,
   pageHeightCss: number,
-  options: { fontBytes?: Uint8Array; password?: string; ownerPassword?: string; permissions?: Permission[] }
+  options: {
+    fontBytes?: Uint8Array;
+    outline?: OutlineItem[];
+    password?: string;
+    ownerPassword?: string;
+    permissions?: Permission[];
+  }
 ): Promise<Buffer> {
   const pdf = await PDFDocument.create();
   pdf.registerFontkit(fontkit);
@@ -1394,6 +1429,7 @@ export async function generatePdfFromPages(
     page.drawImage(image, { x: 0, y: 0, width: W, height: H });
     if (font) drawTextLayer(page, font, texts[i] ?? [], H, supported, widthCache);
   }
+  addOutline(pdf, options.outline ?? [], H);
   // Default permissions mirror secure_pdf_with_pikepdf in nb_convert.py
   // (annotations/forms only). An empty ownerPassword falls back to the user
   // password, so the author can always lift the limits; anyone with that
@@ -1407,6 +1443,63 @@ export async function generatePdfFromPages(
     });
   }
   return Buffer.from(await pdf.save());
+}
+
+interface OutlineNode {
+  ref: PDFRef;
+  dict: PDFDict;
+  level: number;
+  item?: OutlineItem;
+  parent?: OutlineNode;
+  children: OutlineNode[];
+}
+
+// Writes the headings as the PDF outline (the bookmarks panel of a viewer).
+// A heading nests under the nearest earlier heading of a lower level, so a
+// document that skips levels (h1 then h3) still gets a sensible tree. Every
+// entry is expanded and jumps to the heading's position on its page.
+function addOutline(pdf: PDFDocument, items: OutlineItem[], pageHeightPt: number): void {
+  const ctx = pdf.context;
+  const pages = pdf.getPages();
+  const root: OutlineNode = { ref: ctx.nextRef(), dict: ctx.obj({}), level: 0, children: [] };
+  const stack = [root];
+  for (const item of items) {
+    if (!pages[item.page]) continue;
+    while (stack[stack.length - 1].level >= item.level) stack.pop();
+    const parent = stack[stack.length - 1];
+    const node: OutlineNode = { ref: ctx.nextRef(), dict: ctx.obj({}), level: item.level, item, parent, children: [] };
+    parent.children.push(node);
+    stack.push(node);
+  }
+  if (root.children.length === 0) return;
+
+  // Returns the number of descendants, which /Count wants for an open entry.
+  const write = (node: OutlineNode): number => {
+    let count = 0;
+    node.children.forEach((child, i) => {
+      count += 1 + write(child);
+      if (i > 0) child.dict.set(PDFName.of('Prev'), node.children[i - 1].ref);
+      if (i < node.children.length - 1) child.dict.set(PDFName.of('Next'), node.children[i + 1].ref);
+    });
+    const dict = node.dict;
+    if (node.item && node.parent) {
+      const top = clamp(pageHeightPt - node.item.y * PT_PER_CSS_PX, 0, pageHeightPt);
+      dict.set(PDFName.of('Title'), PDFHexString.fromText(node.item.title));
+      dict.set(PDFName.of('Parent'), node.parent.ref);
+      dict.set(PDFName.of('Dest'), ctx.obj([pages[node.item.page].ref, PDFName.of('XYZ'), 0, top, null]));
+    } else {
+      dict.set(PDFName.of('Type'), PDFName.of('Outlines'));
+    }
+    if (node.children.length > 0) {
+      dict.set(PDFName.of('First'), node.children[0].ref);
+      dict.set(PDFName.of('Last'), node.children[node.children.length - 1].ref);
+      dict.set(PDFName.of('Count'), ctx.obj(count));
+    }
+    ctx.assign(node.ref, dict);
+    return count;
+  };
+  write(root);
+  pdf.catalog.set(PDFName.of('Outlines'), root.ref);
 }
 
 // Writes each run as invisible text (render mode 3) stretched horizontally to
