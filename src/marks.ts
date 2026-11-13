@@ -9,9 +9,9 @@ export type Mark = 'hossam' | 'jussam' | 'all';
 export const MARK_HEIGHT = 20;
 
 const MARKS: { mark: Mark; label: string; description: string }[] = [
+  { mark: 'all', label: '통합', description: '주영아 · 이광호 강사' },
   { mark: 'hossam', label: '호쌤', description: '이광호 강사' },
   { mark: 'jussam', label: '쭈쌤', description: '주영아 강사' },
-  { mark: 'all', label: '통합', description: '주영아 · 이광호 강사' },
 ];
 
 export function markLabel(mark: Mark): string {

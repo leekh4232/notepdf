@@ -76,7 +76,7 @@
   "config.watermarkWidth.description": "Watermark width in CSS px.",
   "config.allowRemoteImages.description": "Fetch http(s) images referenced by the document (15 s timeout each). Off = they are left out and listed in the output channel.",
   "config.renderTimeoutSeconds.description": "How long the webview may take to render and capture the document before the conversion fails. Raise it for very long notebooks.",
-  "config.teacherMode.description": "Adds the teacher conversion and note area commands (each with and without password) to the context menus and palette. Each asks which instructor mark to use (호쌤, 쭈쌤 or 통합) and draws it (20 px high) at the top right of every page in place of headerText.",
+  "config.teacherMode.description": "Adds the teacher conversion and note area commands (each with and without password) to the context menus and palette. Each asks which instructor mark to use (통합, 호쌤 or 쭈쌤) and draws it (20 px high) at the top right of every page in place of headerText.",
   "config.pdfPageSize.enum.8": "iPad Pro 13\" (M4/M5, 2752 × 2064 px panel)",
   "config.pdfPageSize.enum.9": "iPad Pro 11\" (M4/M5, 2420 × 1668 px panel)",
   "config.pdfPageSize.enum.10": "iPad Air 13\" (M2/M3, 2732 × 2048 px panel)",

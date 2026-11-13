@@ -60,7 +60,7 @@ ext install leekh.ipynb-pdf-converter
    |:--|:--|:--|
    | 노트북/마크다운을 PDF로 변환 | Convert Notebook/Markdown to PDF | 비밀번호 없이 변환. 설정에 기본 비밀번호가 있어도 쓰지 않음 |
    | … (비밀번호) | … (with Password) | 설정의 기본 비밀번호로 암호화. 비어 있으면 팝업으로 입력. 여러 파일이면 한 번만 묻고 모든 PDF에 같은 비밀번호를 씀 |
-   | … (강사 마크) · … (강사 마크, 비밀번호) | … (Teacher) · … (Teacher, with Password) | `teacherMode`를 켜면 추가. 팝업에서 호쌤 · 쭈쌤 · 통합 중 하나를 골라 그 강사 마크를 모든 페이지 우측 상단에 넣음 |
+   | … (강사 마크) · … (강사 마크, 비밀번호) | … (Teacher) · … (Teacher, with Password) | `teacherMode`를 켜면 추가. 팝업에서 통합 · 호쌤 · 쭈쌤 중 하나를 골라 그 강사 마크를 모든 페이지 우측 상단에 넣음 |
 
 3. 같은 폴더에 `.pdf`가 생깁니다. 같은 이름이 있으면 `이름 (1).pdf`, `이름 (2).pdf`처럼 번호를 붙이고 덮어쓰지 않습니다.
 
@@ -72,7 +72,7 @@ ext install leekh.ipynb-pdf-converter
 |:--|:--|:--|
 | 필기 영역 추가 (PDF) | Add Note Area (PDF) | 비밀번호 없이 |
 | 필기 영역 추가 (PDF, 비밀번호) | Add Note Area (PDF, with Password) | 변환과 같은 규칙. 여러 파일이면 한 번만 묻고 모든 PDF에 같은 비밀번호를 씀. 비밀번호 걸린 원본은 파일마다 물어봄 |
-| 필기 영역 추가 (강사 마크) · (강사 마크, 비밀번호) | Add Note Area (Teacher) · (Teacher, with Password) | `teacherMode`를 켜면 추가. 팝업에서 호쌤 · 쭈쌤 · 통합 중 하나를 골라 그 강사 마크를 넣음 |
+| 필기 영역 추가 (강사 마크) · (강사 마크, 비밀번호) | Add Note Area (Teacher) · (Teacher, with Password) | `teacherMode`를 켜면 추가. 팝업에서 통합 · 호쌤 · 쭈쌤 중 하나를 골라 그 강사 마크를 넣음 |
 
 같은 폴더에 `원본이름_note.pdf`가 생깁니다. 이 명령의 알림 · 진행률 · 로그는 VS Code 표시 언어를 따릅니다.
 
@@ -227,7 +227,7 @@ ext install leekh.ipynb-pdf-converter
 |:--|:--|:--|
 | `allowRemoteImages` | `true` | 문서가 참조하는 http(s) 이미지 내려받기 |
 | `renderTimeoutSeconds` | `60` | 웹뷰 렌더링 제한 시간. 긴 노트북이면 올리기 |
-| `teacherMode` | `false` | 우클릭 메뉴·명령 팔레트에 `(강사 마크)` · `(강사 마크, 비밀번호)` 변환 · 필기 영역 추가 명령 추가. 실행하면 팝업에서 호쌤 · 쭈쌤 · 통합 중 하나를 고르고, 고른 강사 마크(높이 20 px)를 모든 페이지 우측 상단 여백에 오른쪽 끝을 본문에 맞춰 그리며, 이때 `headerText`는 표시하지 않음(꼬릿말은 유지) |
+| `teacherMode` | `false` | 우클릭 메뉴·명령 팔레트에 `(강사 마크)` · `(강사 마크, 비밀번호)` 변환 · 필기 영역 추가 명령 추가. 실행하면 팝업에서 통합 · 호쌤 · 쭈쌤 중 하나를 고르고, 고른 강사 마크(높이 20 px)를 모든 페이지 우측 상단 여백에 오른쪽 끝을 본문에 맞춰 그리며, 이때 `headerText`는 표시하지 않음(꼬릿말은 유지) |
 
 </details>
 

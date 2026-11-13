@@ -76,7 +76,7 @@
   "config.watermarkWidth.description": "워터마크 폭 (CSS px).",
   "config.allowRemoteImages.description": "문서가 참조하는 http(s) 이미지를 내려받습니다 (각 15초 제한). 끄면 빼고 출력 채널에 목록을 남깁니다.",
   "config.renderTimeoutSeconds.description": "웹뷰가 문서를 렌더링·캡처할 수 있는 최대 시간. 아주 긴 노트북이면 올리세요.",
-  "config.teacherMode.description": "우클릭 메뉴와 명령 팔레트에 강사 마크 변환 · 필기 영역 추가 명령(각각 비밀번호 유무)을 추가합니다. 명령을 실행하면 호쌤 · 쭈쌤 · 통합 중 하나를 고르고, 고른 강사 마크(높이 20 px)를 모든 페이지 우측 상단에 headerText 대신 그립니다.",
+  "config.teacherMode.description": "우클릭 메뉴와 명령 팔레트에 강사 마크 변환 · 필기 영역 추가 명령(각각 비밀번호 유무)을 추가합니다. 명령을 실행하면 통합 · 호쌤 · 쭈쌤 중 하나를 고르고, 고른 강사 마크(높이 20 px)를 모든 페이지 우측 상단에 headerText 대신 그립니다.",
   "config.pdfPageSize.enum.8": "iPad Pro 13\" (M4/M5, 패널 2752 × 2064 px)",
   "config.pdfPageSize.enum.9": "iPad Pro 11\" (M4/M5, 패널 2420 × 1668 px)",
   "config.pdfPageSize.enum.10": "iPad Air 13\" (M2/M3, 패널 2732 × 2048 px)",
