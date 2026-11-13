@@ -2,7 +2,7 @@
   "name": "ipynb-pdf-converter",
   "displayName": "NotePDF",
   "description": "%description%",
-  "version": "0.15.1",
+  "version": "0.15.2",
   "publisher": "leekh",
   "icon": "media/icon.png",
   "repository": {
