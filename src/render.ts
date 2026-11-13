@@ -28,6 +28,39 @@ marked.use({
   },
 });
 
+// CommonMark refuses a closing ** that follows whitespace, so "**해설: **" stays
+// literal. Authors mean bold there, so accept it when the closing ** ends a word
+// (followed by whitespace, punctuation or the end). Anything else, such as
+// "**a **b**", is left to the standard rules.
+const LOOSE_STRONG = /^\*\*(?![\s*])((?:[^*\n]|\*(?!\*))*?[^\s*])[ \t]+\*\*(?![^\s\p{P}])/u;
+
+marked.use({
+  extensions: [
+    {
+      name: 'looseStrong',
+      level: 'inline',
+      start(src: string): number | undefined {
+        const index = src.indexOf('**');
+        return index < 0 ? undefined : index;
+      },
+      tokenizer(src: string) {
+        const match = LOOSE_STRONG.exec(src);
+        if (!match) {
+          return undefined;
+        }
+        return {
+          type: 'looseStrong',
+          raw: match[0],
+          tokens: this.lexer.inlineTokens(match[1]),
+        };
+      },
+      renderer(token) {
+        return `<strong>${this.parser.parseInline(token.tokens ?? [])}</strong>`;
+      },
+    },
+  ],
+});
+
 // eslint-disable-next-line no-control-regex
 const ANSI_SGR = /\x1b\[([0-9;]*)m/g;
 
