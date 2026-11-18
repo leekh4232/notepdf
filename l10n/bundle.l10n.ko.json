@@ -1,5 +1,5 @@
 {
-  "Please select a .pdf, .ipynb or .md file": ".pdf, .ipynb 또는 .md 파일을 선택하세요",
+  "Please select a .pdf, .ipynb, .md or .html file": ".pdf, .ipynb, .md 또는 .html 파일을 선택하세요",
   "PDF Password": "PDF 비밀번호",
   "No default password is set (notepdf.pdfPassword). Enter a password for this PDF.": "기본 비밀번호(notepdf.pdfPassword)가 설정되지 않았습니다. 이 PDF에 걸 비밀번호를 입력하세요.",
   "Password cannot be empty": "비밀번호를 입력하세요",

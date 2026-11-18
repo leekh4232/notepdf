@@ -8,13 +8,14 @@ import { Notebook } from './notebook';
 import { isDarkColor, resolvePageTheme, resolveTheme } from './themes';
 import { resolvePageDimensions } from './paper';
 import { inlineImages, loadAsDataUrl } from './images';
+import { inlineHtmlResources } from './htmlsource';
 import { permissionFlags } from './note';
 import { registerNoteCommands } from './notes';
 import { Mark, MARK_HEIGHT, markLabel, markPath, pickMark } from './marks';
 
 let outputChannel: vscode.OutputChannel;
 
-const SUPPORTED_EXTENSIONS = ['.ipynb', '.md'];
+const SUPPORTED_EXTENSIONS = ['.ipynb', '.md', '.html'];
 
 function isSupported(fsPath: string): boolean {
   return SUPPORTED_EXTENSIONS.some((ext) => fsPath.endsWith(ext));
@@ -258,7 +259,7 @@ export function activate(context: vscode.ExtensionContext): void {
             : [arg instanceof vscode.Uri ? arg : resolveActiveSourceUri()];
         const filePaths = targets.flatMap((u) => (u && isSupported(u.fsPath) ? [u.fsPath] : []));
         if (filePaths.length === 0) {
-          vscode.window.showErrorMessage('Please select a .ipynb or .md file');
+          vscode.window.showErrorMessage('Please select a .ipynb, .md or .html file');
           return;
         }
         // One mark and one password for the whole selection.
@@ -281,7 +282,7 @@ export function activate(context: vscode.ExtensionContext): void {
       headerText: '',
       footerText: '',
     };
-    const baseName = path.basename(filePath).replace(/\.(ipynb|md)$/i, '');
+    const baseName = path.basename(filePath).replace(/\.(ipynb|md|html)$/i, '');
     const vars = { file: baseName, name: baseName, date: localDate() };
     const { buffer } = await producePdf(context, filePath, settings, vars, undefined, undefined, token, onProgress);
     return buffer;
@@ -384,7 +385,7 @@ async function convertFilesToPdf(
   outputChannel.clear();
   for (const [i, filePath] of filePaths.entries()) {
     const fileName = path.basename(filePath);
-    const baseName = fileName.replace(/\.(ipynb|md)$/i, '');
+    const baseName = fileName.replace(/\.(ipynb|md|html)$/i, '');
     const vars = { file: baseName, name: baseName, date: localDate() };
     const counter = batch ? ` (${i + 1}/${filePaths.length})` : '';
     outputChannel.appendLine(`📝 Converting${counter}: ${fileName} → PDF`);
@@ -511,10 +512,20 @@ async function producePdf(
   report('Rendering document…', 0.05);
   const raw = await fs.readFile(filePath, 'utf-8');
   let warnings = 0;
-  const bodyHtml = await buildDocumentHtml(filePath, raw, settings, vars, (warning) => {
+  const warn = (warning: string) => {
     warnings++;
     outputChannel.appendLine(`⚠️ ${warning}`);
-  });
+  };
+  // An .html file is captured as it is, in its own frame: no theme, cover or
+  // watermark. The files it links to are written into it (htmlsource.ts).
+  const isHtml = filePath.toLowerCase().endsWith('.html');
+  const bodyHtml = isHtml ? '' : await buildDocumentHtml(filePath, raw, settings, vars, warn);
+  let sourceHtml: string | undefined;
+  if (isHtml) {
+    const inlined = await inlineHtmlResources(raw, sourceDir, { allowRemote: settings.allowRemoteImages });
+    inlined.failures.forEach((failure) => warn(`Not embedded: ${failure}`));
+    sourceHtml = inlined.html;
+  }
 
   let markImage: string | undefined;
   if (mark) {
@@ -532,13 +543,13 @@ async function producePdf(
   const theme = resolveTheme(settings.codeTheme);
   const pageTheme = resolvePageTheme(settings.pdfTheme);
   outputChannel.appendLine(
-    `Rendering in webview (page theme: ${pageTheme.info.label}, code theme: ${theme.info.label}, ` +
+    `Rendering in webview (${isHtml ? 'HTML as is' : `page theme: ${pageTheme.info.label}, code theme: ${theme.info.label}`}, ` +
       `paper: ${layout.key} ${settings.pdfPageOrientation} = ${layout.widthPx}×${layout.heightPx}px CSS, ` +
       `margin: ${layout.margin}px, scale: ${settings.deviceScaleFactor}x, pages as ${settings.imageFormat.toUpperCase()})…`
   );
   report('Capturing pages…', 0.1);
   // The webview reports each captured chunk; capture spans 10%..85%.
-  const { pages, texts, outline } = await captureInWebview(context, { bodyHtml, settings, vars, markImage }, token, (done, total) =>
+  const { pages, texts, outline } = await captureInWebview(context, { bodyHtml, settings, vars, markImage, sourceHtml }, token, (done, total) =>
     report(`Capturing pages… (${done}/${total})`, 0.1 + (done / total) * 0.75)
   );
 
@@ -641,6 +652,8 @@ export interface CaptureParams {
   vars: Record<string, string>;
   // data: URL of the instructor mark (teacher mode); replaces the header text.
   markImage?: string;
+  // A whole .html document to capture as it is (bodyHtml is then unused).
+  sourceHtml?: string;
 }
 
 // One line of text on a page, in CSS px from the page's top-left corner.
@@ -761,6 +774,47 @@ export async function buildCaptureHtml(
   const { bodyHtml, settings, vars, markImage } = params;
   const asset = (...segments: string[]) => path.join(mediaDir, ...segments);
   const layout = resolveLayout(settings);
+  const running = {
+    header: { text: expandPlaceholders(settings.headerText, vars), align: settings.headerAlign },
+    footer: { text: expandPlaceholders(settings.footerText, vars), align: settings.footerAlign },
+    runningFontPx: settings.headerFooterFontSize,
+    mark: markImage ? { image: markImage, height: MARK_HEIGHT } : null,
+  };
+  const breakBeforeSelector = {
+    h1: 'h1, .jp-PageBreakBefore',
+    'h1-h2': 'h1, h2, .jp-PageBreakBefore',
+    none: '.jp-PageBreakBefore',
+  }[settings.pageBreakBefore];
+
+  // An .html source goes into a frame one content area in size, so its own
+  // CSS (media queries, vw/vh) sees the paper, and none of ours reaches it.
+  if (params.sourceHtml !== undefined) {
+    const width = layout.widthPx - 2 * layout.margin;
+    const height = layout.heightPx - 2 * layout.margin;
+    return buildWebviewHtml({
+      bodyHtml: '',
+      htmlAttrs: '',
+      bodyAttrs: '',
+      cspSource,
+      html2canvasUri,
+      allowRemote: settings.allowRemoteImages,
+      inlineCss:
+        `html, body { margin: 0; padding: 0; background: #ffffff; }\n` +
+        `#capture-frame { display: block; border: 0; width: ${width}px; height: ${height}px; }`,
+      config: {
+        scale: settings.deviceScaleFactor,
+        pageW: layout.widthPx,
+        pageH: layout.heightPx,
+        margin: layout.margin,
+        background: null,
+        imageFormat: settings.imageFormat,
+        jpegQuality: settings.jpegQuality / 100,
+        ...running,
+        breakBeforeSelector,
+        frame: params.sourceHtml,
+      },
+    });
+  }
   const theme = resolveTheme(settings.codeTheme);
   const pageTheme = resolvePageTheme(settings.pdfTheme);
   const themeKey = theme.key;
@@ -824,12 +878,6 @@ export async function buildCaptureHtml(
   const bodyAttrs = isMdr ? ' class="mdr-pre mdr"' : '';
   const content = isMdr ? `<article class="mdr-content">${bodyHtml}</article>` : bodyHtml;
 
-  const breakBeforeSelector = {
-    h1: 'h1, .jp-PageBreakBefore',
-    'h1-h2': 'h1, h2, .jp-PageBreakBefore',
-    none: '.jp-PageBreakBefore',
-  }[settings.pageBreakBefore];
-
   return buildWebviewHtml({
     bodyHtml: content,
     htmlAttrs,
@@ -845,11 +893,8 @@ export async function buildCaptureHtml(
       background: pageTheme.info.background,
       imageFormat: settings.imageFormat,
       jpegQuality: settings.jpegQuality / 100,
-      header: { text: expandPlaceholders(settings.headerText, vars), align: settings.headerAlign },
-      footer: { text: expandPlaceholders(settings.footerText, vars), align: settings.footerAlign },
-      runningFontPx: settings.headerFooterFontSize,
+      ...running,
       breakBeforeSelector,
-      mark: markImage ? { image: markImage, height: MARK_HEIGHT } : null,
     },
   });
 }
@@ -859,7 +904,7 @@ interface WebviewConfig {
   pageW: number;
   pageH: number;
   margin: number;
-  background: string;
+  background: string | null; // null: taken from the framed document
   imageFormat: ImageFormat;
   jpegQuality: number;
   header: { text: string; align: Alignment };
@@ -867,6 +912,7 @@ interface WebviewConfig {
   runningFontPx: number;
   breakBeforeSelector: string;
   mark: { image: string; height: number } | null;
+  frame?: string; // an .html document to load in a frame and capture as it is
 }
 
 function buildWebviewHtml(params: {
@@ -877,16 +923,18 @@ function buildWebviewHtml(params: {
   html2canvasUri: string;
   inlineCss: string;
   config: WebviewConfig;
+  allowRemote?: boolean; // an .html source may load its https resources
 }): string {
   const { bodyHtml, htmlAttrs, bodyAttrs, cspSource, html2canvasUri, inlineCss, config } = params;
+  const remote = params.allowRemote ? ' https:' : '';
   // The config lands inside a <script>; keep it JSON-safe and tag-safe.
   const configJs = JSON.stringify(config).replace(/</g, '\\u003c');
   const csp = [
     `default-src 'none'`,
-    `img-src ${cspSource} data: blob:`,
-    `style-src ${cspSource} 'unsafe-inline'`,
-    `script-src ${cspSource} 'unsafe-inline'`,
-    `font-src ${cspSource} data:`,
+    `img-src ${cspSource}${remote} data: blob:`,
+    `style-src ${cspSource}${remote} 'unsafe-inline'`,
+    `script-src ${cspSource}${remote} 'unsafe-inline'`,
+    `font-src ${cspSource}${remote} data:`,
   ].join('; ');
 
   return `<!DOCTYPE html>
@@ -898,7 +946,7 @@ function buildWebviewHtml(params: {
 <script src="${html2canvasUri}"></script>
 </head>
 <body${bodyAttrs}>
-<div id="capture-root">${bodyHtml}</div>
+${config.frame === undefined ? `<div id="capture-root">${bodyHtml}</div>` : ''}
 <script>
 (function () {
   const vscode = acquireVsCodeApi();
@@ -935,8 +983,8 @@ function buildWebviewHtml(params: {
       add(r.top, Math.min(r.bottom, r.top + EDGE));
       add(Math.max(r.top, r.bottom - EDGE), r.bottom);
     });
-    const range = document.createRange();
-    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+    const range = root.ownerDocument.createRange();
+    const walker = root.ownerDocument.createTreeWalker(root, NodeFilter.SHOW_TEXT);
     for (let node = walker.nextNode(); node; node = walker.nextNode()) {
       if (!node.data.trim()) continue;
       range.selectNodeContents(node);
@@ -1109,7 +1157,7 @@ function buildWebviewHtml(params: {
   function collectTextRuns(root) {
     const rootRect = root.getBoundingClientRect();
     const runs = [];
-    const range = document.createRange();
+    const range = root.ownerDocument.createRange();
     let cur = null;
     let pendingSpace = false;
     const flush = () => {
@@ -1147,7 +1195,7 @@ function buildWebviewHtml(params: {
       range.setEnd(node, end);
       return Array.from(range.getClientRects()).filter((r) => r.width > 0 && r.height > 0);
     };
-    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+    const walker = root.ownerDocument.createTreeWalker(root, NodeFilter.SHOW_TEXT);
     for (let node = walker.nextNode(); node; node = walker.nextNode()) {
       const el = node.parentElement;
       const data = node.data;
@@ -1207,17 +1255,32 @@ function buildWebviewHtml(params: {
     return items;
   }
 
-  function capture() {
-    const target = document.getElementById('capture-root');
+  // The paper color around a framed document: its own body or html
+  // background, white when it sets none.
+  function pageBackground(doc) {
+    for (const el of [doc.body, doc.documentElement]) {
+      const color = el && getComputedStyle(el).backgroundColor;
+      if (color && color !== 'transparent' && color !== 'rgba(0, 0, 0, 0)') return color;
+    }
+    return '#ffffff';
+  }
+
+  function capture(target) {
+    // A framed document is captured from its root element, in its own window.
+    const view = target.ownerDocument.defaultView;
+    const framed = view !== window;
+    if (!cfg.background) cfg.background = pageBackground(target.ownerDocument);
     const runs = collectTextRuns(target);
     const boxes = collectKeepTogether(target);
     const forced = forcedBreaks(target, boxes);
     const rect = target.getBoundingClientRect();
     // Document position of the root, fixed now: the chunks are captured one
     // after another, and scrolling the view meanwhile must not move them.
-    const originX = rect.left + window.scrollX;
-    const originY = rect.top + window.scrollY;
-    const cuts = computeCuts(rect.height, contentH, boxes, forced);
+    const originX = rect.left + view.scrollX;
+    const originY = rect.top + view.scrollY;
+    // A root element with a fixed height (html { height: 100% }) is shorter than its content.
+    const totalH = framed ? Math.max(rect.height, target.scrollHeight) : rect.height;
+    const cuts = computeCuts(totalH, contentH, boxes, forced);
     if (cuts.length === 0) cuts.push([0, 1]); // empty document: still one page
     const outline = collectOutline(target, cuts);
     const chunks = groupCuts(cuts, MAX_CHUNK_PX / scale);
@@ -1234,8 +1297,9 @@ function buildWebviewHtml(params: {
             backgroundColor: cfg.background,
             useCORS: true,
             logging: false,
-            windowWidth: target.scrollWidth,
-            windowHeight: target.scrollHeight,
+            // The frame keeps its size in the clone, so vw/vh lay out the same.
+            windowWidth: framed ? view.innerWidth : target.scrollWidth,
+            windowHeight: framed ? view.innerHeight : target.scrollHeight,
             x: originX,
             y: originY + chunk.top,
             width: Math.ceil(rect.width),
@@ -1343,7 +1407,7 @@ function buildWebviewHtml(params: {
       jobs.push(
         rasterize(sizedSvgUrl(svg.cloneNode(true), r.width, r.height), r.width, r.height).then((png) => {
           if (!png) return;
-          const img = document.createElement('img');
+          const img = root.ownerDocument.createElement('img');
           img.src = png;
           img.alt = '';
           img.style.display = style.display === 'inline' ? 'inline-block' : style.display;
@@ -1361,17 +1425,31 @@ function buildWebviewHtml(params: {
       Array.from(root.querySelectorAll('img')).map((img) => (img.decode ? img.decode().catch(() => undefined) : undefined))
     );
   }
-  // Wait for fonts and images before capturing
-  const imgPromises = Array.from(document.images).map((img) =>
-    img.complete ? Promise.resolve() : new Promise((r) => {
-      img.addEventListener('load', r);
-      img.addEventListener('error', r);
-    })
-  );
-  Promise.all([document.fonts ? document.fonts.ready : Promise.resolve(), loadMark(), ...imgPromises])
-    .then(() => rasterizeSvgs(document.getElementById('capture-root')))
-    .catch(() => undefined)
-    .then(() => requestAnimationFrame(() => requestAnimationFrame(capture)));
+  // Wait for fonts and images before capturing; settleMs more lets a framed
+  // document's scripts finish drawing.
+  function start(target, settleMs) {
+    const doc = target.ownerDocument;
+    const imgPromises = Array.from(doc.images).map((img) =>
+      img.complete ? Promise.resolve() : new Promise((r) => {
+        img.addEventListener('load', r);
+        img.addEventListener('error', r);
+      })
+    );
+    Promise.all([doc.fonts ? doc.fonts.ready : Promise.resolve(), loadMark(), ...imgPromises])
+      .then(() => new Promise((r) => setTimeout(r, settleMs)))
+      .then(() => rasterizeSvgs(target))
+      .catch(() => undefined)
+      .then(() => requestAnimationFrame(() => requestAnimationFrame(() => capture(target))));
+  }
+  if (cfg.frame === undefined) {
+    start(document.getElementById('capture-root'), 0);
+  } else {
+    const frame = document.createElement('iframe');
+    frame.id = 'capture-frame';
+    frame.addEventListener('load', () => start(frame.contentDocument.documentElement, 500));
+    frame.srcdoc = cfg.frame;
+    document.body.appendChild(frame);
+  }
 })();
 </script>
 </body>

@@ -4,6 +4,16 @@
 
 형식은 [Keep a Changelog](https://keepachangelog.com/ko/1.1.0/)를, 버전은 [유의적 버전](https://semver.org/lang/ko/)을 따릅니다.
 
+## [0.16.0] - 2026-11-19
+
+### 추가
+- **`.html` 파일을 PDF로 변환합니다.** `.html`을 우클릭하면 **PDF로 변환**과 **필기 영역 추가** 메뉴가 나옵니다. 페이지 테마(`pdfTheme`) · 코드 테마(`codeTheme`) · 글꼴 설정을 입히지 않고 **문서 자체의 스타일 그대로** 변환하며, 페이지 여백의 색도 문서의 배경색을 따릅니다. 문서가 연결한 CSS 파일(`@import` · 배경 그림 · 글꼴 포함) · 스크립트 파일 · 이미지를 함께 넣고, 문서 안의 스크립트를 실행한 뒤 캡처합니다. 용지 크기 · 방향 · 여백, 머릿말 · 꼬릿말, `pageBreakBefore`, 텍스트 층, 제목 개요(책갈피), 비밀번호, 강사 마크는 `.ipynb` · `.md`와 똑같이 적용됩니다. 표지(`coverPage`)와 워터마크(`watermarkImage`)는 `.html`에 넣지 않습니다.
+- `.html`의 `prefers-color-scheme` 미디어 쿼리는 VS Code 색 테마와 상관없이 항상 밝은 쪽으로 적용됩니다(인쇄와 같음).
+
+### 변경
+- `allowRemoteImages`가 `.html` 문서의 http(s) CSS · 스크립트 · 글꼴에도 적용됩니다. 기본값은 그대로 `true`이고, 끄면 원격 자원을 불러오지 않습니다.
+- 변환 명령 이름이 **노트북/마크다운/HTML을 PDF로 변환**(Convert Notebook/Markdown/HTML to PDF)으로 바뀌었습니다. 명령 ID는 그대로입니다.
+
 ## [0.15.2] - 2026-11-13
 
 ### 변경

@@ -1,5 +1,5 @@
 // Note area commands (formerly the PDF2Note extension): add a ruled note area
-// and a header band to every page of a PDF, or of an .ipynb/.md converted first.
+// and a header band to every page of a PDF, or of an .ipynb/.md/.html converted first.
 import * as vscode from 'vscode';
 import * as path from 'path';
 import { promises as fs } from 'fs';
@@ -8,7 +8,7 @@ import { addNoteArea, loadSource, permissionFlags, resolvePaper, setTranslator, 
 import type { PDFDocument } from '@cantoo/pdf-lib';
 import { Mark, MARK_HEIGHT, markLabel, markPath, pickMark } from './marks';
 
-const SUPPORTED = ['.pdf', '.ipynb', '.md'];
+const SUPPORTED = ['.pdf', '.ipynb', '.md', '.html'];
 
 
 const ALIGNMENTS = ['left', 'center', 'right'] as const;
@@ -141,7 +141,7 @@ export function registerNoteCommands(context: vscode.ExtensionContext, channel: 
           u && SUPPORTED.includes(path.extname(u.fsPath).toLowerCase()) ? [u.fsPath] : []
         );
         if (filePaths.length === 0) {
-          vscode.window.showErrorMessage(vscode.l10n.t('Please select a .pdf, .ipynb or .md file'));
+          vscode.window.showErrorMessage(vscode.l10n.t('Please select a .pdf, .ipynb, .md or .html file'));
           return;
         }
         // One mark and one password for the whole selection.

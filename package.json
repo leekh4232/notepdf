@@ -25,6 +25,7 @@
     "jupyter",
     "notebook",
     "markdown",
+    "html",
     "pdf",
     "note",
     "handout",
@@ -92,36 +93,36 @@
       "explorer/context": [
         {
           "submenu": "ipynb-pdf-converter.submenu",
-          "when": "resourceExtname == .ipynb || resourceExtname == .md",
+          "when": "resourceExtname == .ipynb || resourceExtname == .md || resourceExtname == .html",
           "group": "navigation@98"
         },
         {
           "submenu": "ipynb-pdf-converter.noteSubmenu",
-          "when": "resourceExtname == .pdf || resourceExtname == .ipynb || resourceExtname == .md",
+          "when": "resourceExtname == .pdf || resourceExtname == .ipynb || resourceExtname == .md || resourceExtname == .html",
           "group": "navigation@90"
         }
       ],
       "editor/title/context": [
         {
           "submenu": "ipynb-pdf-converter.submenu",
-          "when": "resourceExtname == .ipynb || resourceExtname == .md",
+          "when": "resourceExtname == .ipynb || resourceExtname == .md || resourceExtname == .html",
           "group": "navigation@98"
         },
         {
           "submenu": "ipynb-pdf-converter.noteSubmenu",
-          "when": "resourceExtname == .pdf || resourceExtname == .ipynb || resourceExtname == .md",
+          "when": "resourceExtname == .pdf || resourceExtname == .ipynb || resourceExtname == .md || resourceExtname == .html",
           "group": "navigation@90"
         }
       ],
       "editor/context": [
         {
           "submenu": "ipynb-pdf-converter.submenu",
-          "when": "resourceExtname == .ipynb || resourceExtname == .md",
+          "when": "resourceExtname == .ipynb || resourceExtname == .md || resourceExtname == .html",
           "group": "navigation@98"
         },
         {
           "submenu": "ipynb-pdf-converter.noteSubmenu",
-          "when": "resourceExtname == .pdf || resourceExtname == .ipynb || resourceExtname == .md",
+          "when": "resourceExtname == .pdf || resourceExtname == .ipynb || resourceExtname == .md || resourceExtname == .html",
           "group": "navigation@90"
         }
       ],
@@ -140,78 +141,78 @@
       "commandPalette": [
         {
           "command": "ipynb-pdf-converter.convertToPdf",
-          "when": "resourceExtname == .ipynb || resourceExtname == .md || activeEditor == 'workbench.editor.notebook'"
+          "when": "resourceExtname == .ipynb || resourceExtname == .md || resourceExtname == .html || activeEditor == 'workbench.editor.notebook'"
         },
         {
           "command": "ipynb-pdf-converter.convertToPdfWithPassword",
-          "when": "resourceExtname == .ipynb || resourceExtname == .md || activeEditor == 'workbench.editor.notebook'"
+          "when": "resourceExtname == .ipynb || resourceExtname == .md || resourceExtname == .html || activeEditor == 'workbench.editor.notebook'"
         },
         {
           "command": "ipynb-pdf-converter.convertToPdfTeacher",
-          "when": "(resourceExtname == .ipynb || resourceExtname == .md || activeEditor == 'workbench.editor.notebook') && config.notepdf.teacherMode"
+          "when": "(resourceExtname == .ipynb || resourceExtname == .md || resourceExtname == .html || activeEditor == 'workbench.editor.notebook') && config.notepdf.teacherMode"
         },
         {
           "command": "ipynb-pdf-converter.convertToPdfTeacherWithPassword",
-          "when": "(resourceExtname == .ipynb || resourceExtname == .md || activeEditor == 'workbench.editor.notebook') && config.notepdf.teacherMode"
+          "when": "(resourceExtname == .ipynb || resourceExtname == .md || resourceExtname == .html || activeEditor == 'workbench.editor.notebook') && config.notepdf.teacherMode"
         },
         {
           "command": "ipynb-pdf-converter.addNotes",
-          "when": "resourceExtname == .pdf || resourceExtname == .ipynb || resourceExtname == .md"
+          "when": "resourceExtname == .pdf || resourceExtname == .ipynb || resourceExtname == .md || resourceExtname == .html"
         },
         {
           "command": "ipynb-pdf-converter.addNotesWithPassword",
-          "when": "resourceExtname == .pdf || resourceExtname == .ipynb || resourceExtname == .md"
+          "when": "resourceExtname == .pdf || resourceExtname == .ipynb || resourceExtname == .md || resourceExtname == .html"
         },
         {
           "command": "ipynb-pdf-converter.addNotesTeacher",
-          "when": "(resourceExtname == .pdf || resourceExtname == .ipynb || resourceExtname == .md) && config.notepdf.teacherMode"
+          "when": "(resourceExtname == .pdf || resourceExtname == .ipynb || resourceExtname == .md || resourceExtname == .html) && config.notepdf.teacherMode"
         },
         {
           "command": "ipynb-pdf-converter.addNotesTeacherWithPassword",
-          "when": "(resourceExtname == .pdf || resourceExtname == .ipynb || resourceExtname == .md) && config.notepdf.teacherMode"
+          "when": "(resourceExtname == .pdf || resourceExtname == .ipynb || resourceExtname == .md || resourceExtname == .html) && config.notepdf.teacherMode"
         }
       ],
       "ipynb-pdf-converter.submenu": [
         {
           "command": "ipynb-pdf-converter.convertToPdf",
-          "when": "resourceExtname == .ipynb || resourceExtname == .md",
+          "when": "resourceExtname == .ipynb || resourceExtname == .md || resourceExtname == .html",
           "group": "1_default@0"
         },
         {
           "command": "ipynb-pdf-converter.convertToPdfWithPassword",
-          "when": "resourceExtname == .ipynb || resourceExtname == .md",
+          "when": "resourceExtname == .ipynb || resourceExtname == .md || resourceExtname == .html",
           "group": "1_default@1"
         },
         {
           "command": "ipynb-pdf-converter.convertToPdfTeacher",
-          "when": "(resourceExtname == .ipynb || resourceExtname == .md) && config.notepdf.teacherMode",
+          "when": "(resourceExtname == .ipynb || resourceExtname == .md || resourceExtname == .html) && config.notepdf.teacherMode",
           "group": "2_teacher@2"
         },
         {
           "command": "ipynb-pdf-converter.convertToPdfTeacherWithPassword",
-          "when": "(resourceExtname == .ipynb || resourceExtname == .md) && config.notepdf.teacherMode",
+          "when": "(resourceExtname == .ipynb || resourceExtname == .md || resourceExtname == .html) && config.notepdf.teacherMode",
           "group": "2_teacher@3"
         }
       ],
       "ipynb-pdf-converter.noteSubmenu": [
         {
           "command": "ipynb-pdf-converter.addNotes",
-          "when": "resourceExtname == .pdf || resourceExtname == .ipynb || resourceExtname == .md",
+          "when": "resourceExtname == .pdf || resourceExtname == .ipynb || resourceExtname == .md || resourceExtname == .html",
           "group": "1_default@0"
         },
         {
           "command": "ipynb-pdf-converter.addNotesWithPassword",
-          "when": "resourceExtname == .pdf || resourceExtname == .ipynb || resourceExtname == .md",
+          "when": "resourceExtname == .pdf || resourceExtname == .ipynb || resourceExtname == .md || resourceExtname == .html",
           "group": "1_default@1"
         },
         {
           "command": "ipynb-pdf-converter.addNotesTeacher",
-          "when": "(resourceExtname == .pdf || resourceExtname == .ipynb || resourceExtname == .md) && config.notepdf.teacherMode",
+          "when": "(resourceExtname == .pdf || resourceExtname == .ipynb || resourceExtname == .md || resourceExtname == .html) && config.notepdf.teacherMode",
           "group": "2_teacher@2"
         },
         {
           "command": "ipynb-pdf-converter.addNotesTeacherWithPassword",
-          "when": "(resourceExtname == .pdf || resourceExtname == .ipynb || resourceExtname == .md) && config.notepdf.teacherMode",
+          "when": "(resourceExtname == .pdf || resourceExtname == .ipynb || resourceExtname == .md || resourceExtname == .html) && config.notepdf.teacherMode",
           "group": "2_teacher@3"
         }
       ]

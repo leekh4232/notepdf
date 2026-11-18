@@ -4,7 +4,7 @@
 
 # NotePDF
 
-**Jupyter 노트북(.ipynb)과 마크다운(.md)을 우클릭 한 번으로 종이 규격 PDF로. PDF에는 줄노트 필기 영역도 붙입니다.**
+**Jupyter 노트북(.ipynb) · 마크다운(.md) · HTML(.html)을 우클릭 한 번으로 종이 규격 PDF로. PDF에는 줄노트 필기 영역도 붙입니다.**
 
 Python도 Chromium도 설치하지 않습니다. VS Code 안에서 렌더링부터 저장까지 끝냅니다.
 
@@ -34,10 +34,11 @@ Python도 Chromium도 설치하지 않습니다. VS Code 안에서 렌더링부�
 | 📐 **용지 규격** | A3 · A4 · A5 · B4 · B5 · Letter · Legal · 16:9 와이드 · 태블릿 7종(iPad · Galaxy Tab), 세로/가로 |
 | ✂️ **똑똑한 페이지 나누기** | 글줄 · 표 행 · 그림 중간에서는 자르지 않음 |
 | 🎨 **테마** | 페이지 테마 3종, 코드 하이라이트 11종 |
+| 🌐 **HTML 그대로** | `.html`은 테마를 입히지 않고 문서 자체의 스타일 · 스크립트 결과 그대로 변환. 연결된 CSS · 스크립트 · 글꼴 · 이미지 포함 |
 | 📋 **텍스트 복사 · 검색** | 보이는 글자를 드래그해서 복사하고 PDF 뷰어에서 검색할 수 있음. 코드 들여쓰기도 그대로 복사됨 |
 | 🔖 **제목 개요** | 1~6수준 제목이 PDF 개요(책갈피)로 들어가, 뷰어의 개요 창에서 눌러 그 위치로 이동함. 변환 명령으로 만든 PDF에 적용됨 |
 | 🖼️ **이미지 그대로** | 상대·절대 경로, `file:` · `http(s)` URL, 셀 첨부(`attachment:`) 모두 PDF에 포함. SVG는 보이는 크기 그대로 페이지 해상도로 그려 넣음. 못 찾은 이미지는 경고 |
-| 📝 **필기 영역** | `.pdf` · `.ipynb` · `.md` 페이지마다 줄노트 필기 영역과 머릿말 · 꼬릿말. 가로 원본은 아래에, 세로 원본은 오른쪽에 |
+| 📝 **필기 영역** | `.pdf` · `.ipynb` · `.md` · `.html` 페이지마다 줄노트 필기 영역과 머릿말 · 꼬릿말. 가로 원본은 아래에, 세로 원본은 오른쪽에 |
 | 💬 **피드백 모드** | 원본 아래 배너 이미지, 필기 영역을 좌우로 나누는 분리선 |
 | 🔒 **비밀번호** | AES-256 암호화, 열람 비밀번호와 권한(인쇄 · 복사 · 수정 · 주석). 비밀번호 걸린 원본 PDF에도 필기 영역을 붙일 수 있음 |
 | 📦 **의존성 0** | Python · nbconvert · Playwright · Chromium 설치 불필요 |
@@ -53,12 +54,12 @@ ext install leekh.ipynb-pdf-converter
 
 ## 사용 방법
 
-1. `.ipynb` 또는 `.md` 파일을 **우클릭**합니다. 탐색기에서 여러 파일을 선택한 채 우클릭하면 선택한 파일을 모두 차례로 변환합니다.
+1. `.ipynb` · `.md` · `.html` 파일을 **우클릭**합니다. 탐색기에서 여러 파일을 선택한 채 우클릭하면 선택한 파일을 모두 차례로 변환합니다.
 2. **PDF로 변환**(Convert to PDF) 메뉴에서 명령을 고릅니다.
 
    | 한국어 UI | English UI | 하는 일 |
    |:--|:--|:--|
-   | 노트북/마크다운을 PDF로 변환 | Convert Notebook/Markdown to PDF | 비밀번호 없이 변환. 설정에 기본 비밀번호가 있어도 쓰지 않음 |
+   | 노트북/마크다운/HTML을 PDF로 변환 | Convert Notebook/Markdown/HTML to PDF | 비밀번호 없이 변환. 설정에 기본 비밀번호가 있어도 쓰지 않음 |
    | … (비밀번호) | … (with Password) | 설정의 기본 비밀번호로 암호화. 비어 있으면 팝업으로 입력. 여러 파일이면 한 번만 묻고 모든 PDF에 같은 비밀번호를 씀 |
    | … (강사 마크) · … (강사 마크, 비밀번호) | … (Teacher) · … (Teacher, with Password) | `teacherMode`를 켜면 추가. 팝업에서 통합 · 호쌤 · 쭈쌤 중 하나를 골라 그 강사 마크를 모든 페이지 우측 상단에 넣음 |
 
@@ -66,7 +67,7 @@ ext install leekh.ipynb-pdf-converter
 
 ### 필기 영역 추가
 
-`.pdf` · `.ipynb` · `.md`를 우클릭하고 **필기 영역 추가**(Add Note Area) 메뉴에서 고릅니다. `.ipynb` · `.md`는 메모리에서 먼저 PDF로 바꾼 뒤 붙이므로 임시 파일이 남지 않습니다. 원본의 글자는 그대로 남아 복사 · 검색이 됩니다.
+`.pdf` · `.ipynb` · `.md` · `.html`을 우클릭하고 **필기 영역 추가**(Add Note Area) 메뉴에서 고릅니다. `.ipynb` · `.md` · `.html`은 메모리에서 먼저 PDF로 바꾼 뒤 붙이므로 임시 파일이 남지 않습니다. 원본의 글자는 그대로 남아 복사 · 검색이 됩니다.
 
 | 한국어 UI | English UI | 하는 일 |
 |:--|:--|:--|
@@ -77,6 +78,21 @@ ext install leekh.ipynb-pdf-converter
 같은 폴더에 `원본이름_note.pdf`가 생깁니다. 이 명령의 알림 · 진행률 · 로그는 VS Code 표시 언어를 따릅니다.
 
 ![세 가지 레이아웃: 가로 원본은 세로 페이지에 위아래로, 세로 원본은 가로 페이지에 좌우로, 피드백 모드는 배너와 분리선](media/readme/layout.png)
+
+### HTML 변환
+
+`.html`은 테마를 입히지 않고 문서 그대로 변환합니다.
+
+| 구분 | 내용 |
+|:--|:--|
+| 적용하지 않는 것 | `pdfTheme` · `codeTheme` · `baseFontSize` · `bodyFontFamily` · `codeFontFamily` · `tableNowrap` · `showLineNumbers` · `coverPage` · `watermarkImage` |
+| 적용하는 것 | 용지 크기 · 방향 · 여백, 머릿말 · 꼬릿말, `pageBreakBefore`, 텍스트 층, 제목 개요, 비밀번호, 강사 마크, `imageFormat` · `deviceScaleFactor` |
+| 화면 폭 | 용지 폭에서 좌우 여백을 뺀 값(A4 세로 · 여백 48이면 698 px). 문서의 미디어 쿼리와 `vw` · `vh`가 이 크기를 기준으로 계산됨 |
+| 여백 색 | 문서의 `body`(없으면 `html`) 배경색. 지정하지 않았으면 흰색 |
+| 연결된 파일 | CSS 파일(`@import`, 배경 그림, 글꼴 포함) · 스크립트 파일 · 이미지를 문서에 넣어 변환. 찾지 못한 파일은 경고 |
+| 원격 자원 | http(s) CSS · 스크립트 · 글꼴 · 이미지는 `allowRemoteImages`가 켜져 있을 때만 불러옴 |
+| 스크립트 | 문서의 스크립트를 실행하고, 로드가 끝난 뒤 0.5초 기다렸다가 캡처 |
+| 색 구성 | `prefers-color-scheme`은 VS Code 색 테마와 상관없이 항상 밝은 쪽 |
 
 `.md`의 `---`로 감싼 머리글(YAML front matter)은 PDF에 넣지 않습니다. 맨 위 머리글(예: `theme` · `title` · `layout`)과 Slidev 슬라이드마다 붙는 `layout: two-cols` 같은 블록이 모두 빠지고, 코드 블록 안의 예시는 그대로 남습니다.
 
@@ -225,7 +241,7 @@ ext install leekh.ipynb-pdf-converter
 
 | 설정 | 기본값 | 설명 |
 |:--|:--|:--|
-| `allowRemoteImages` | `true` | 문서가 참조하는 http(s) 이미지 내려받기 |
+| `allowRemoteImages` | `true` | 문서가 참조하는 http(s) 이미지 내려받기. `.html` 문서의 http(s) CSS · 스크립트 · 글꼴에도 적용 |
 | `renderTimeoutSeconds` | `60` | 웹뷰 렌더링 제한 시간. 긴 노트북이면 올리기 |
 | `teacherMode` | `false` | 우클릭 메뉴·명령 팔레트에 `(강사 마크)` · `(강사 마크, 비밀번호)` 변환 · 필기 영역 추가 명령 추가. 실행하면 팝업에서 통합 · 호쌤 · 쭈쌤 중 하나를 고르고, 고른 강사 마크(높이 20 px)를 모든 페이지 우측 상단 여백에 오른쪽 끝을 본문에 맞춰 그리며, 이때 `headerText`는 표시하지 않음(꼬릿말은 유지) |
 
