@@ -7,6 +7,7 @@ import { fileURLToPath } from 'url';
 import { addNoteArea, loadSource, permissionFlags, resolvePaper, setTranslator, Align, SourceEncryptedError, WrongPasswordError } from './note';
 import type { PDFDocument } from '@cantoo/pdf-lib';
 import { Mark, MARK_HEIGHT, markLabel, markPath, pickMark } from './marks';
+import { HtmlMargin, isHtmlFile, pickHtmlMargin } from './htmlmargin';
 
 const SUPPORTED = ['.pdf', '.ipynb', '.md', '.html'];
 
@@ -117,7 +118,8 @@ const COMMANDS: { id: string; withPassword: boolean; teacher?: boolean }[] = [
 export type ConvertToBytes = (
   filePath: string,
   token: vscode.CancellationToken,
-  onProgress: (message: string, fraction: number) => void
+  onProgress: (message: string, fraction: number) => void,
+  htmlMargin?: HtmlMargin
 ) => Promise<Uint8Array>;
 
 let convertToBytes: ConvertToBytes;
@@ -149,11 +151,16 @@ export function registerNoteCommands(context: vscode.ExtensionContext, channel: 
         if (teacher && mark === undefined) {
           return; // prompt dismissed
         }
+        // Asked once for the selection, and only when it has an .html file.
+        const htmlMargin = filePaths.some(isHtmlFile) ? await pickHtmlMargin() : undefined;
+        if (filePaths.some(isHtmlFile) && htmlMargin === undefined) {
+          return; // prompt dismissed
+        }
         const password = withPassword ? await resolvePassword() : undefined;
         if (withPassword && password === undefined) {
           return; // prompt dismissed
         }
-        await runAll(context, filePaths, password, mark);
+        await runAll(context, filePaths, password, mark, htmlMargin);
       })
     );
   }
@@ -187,7 +194,8 @@ async function runAll(
   context: vscode.ExtensionContext,
   filePaths: string[],
   password: string | undefined,
-  mark: Mark | undefined
+  mark: Mark | undefined,
+  htmlMargin: HtmlMargin | undefined
 ): Promise<void> {
   const settings = readSettings(vscode.workspace.getConfiguration('notepdf'));
   const batch = filePaths.length > 1;
@@ -195,7 +203,7 @@ async function runAll(
   outputChannel.clear();
   for (const [i, filePath] of filePaths.entries()) {
     const counter = batch ? ` (${i + 1}/${filePaths.length})` : '';
-    const result = await run(context, filePath, password, mark, settings, counter, !batch);
+    const result = await run(context, filePath, password, mark, htmlMargin, settings, counter, !batch);
     results.push(result);
     if (result === 'cancelled') {
       break;
@@ -232,6 +240,7 @@ async function run(
   filePath: string,
   password: string | undefined,
   mark: Mark | undefined,
+  htmlMargin: HtmlMargin | undefined,
   settings: Settings,
   counter: string,
   notify: boolean
@@ -248,7 +257,7 @@ async function run(
         reached = next;
       };
       try {
-        const warnings = await addNotesToFile(context, filePath, password, mark, settings, token, report, notify);
+        const warnings = await addNotesToFile(context, filePath, password, mark, htmlMargin, settings, token, report, notify);
         return warnings > 0 ? 'warned' : 'ok';
       } catch (error) {
         if (token.isCancellationRequested || error instanceof CancelledError) {
@@ -276,6 +285,7 @@ async function addNotesToFile(
   filePath: string,
   password: string | undefined,
   mark: Mark | undefined,
+  htmlMargin: HtmlMargin | undefined,
   settings: Settings,
   token: vscode.CancellationToken,
   report: (message: string, fraction: number) => void,
@@ -299,7 +309,7 @@ async function addNotesToFile(
     input = new Uint8Array(await fs.readFile(filePath));
   } else {
     report(vscode.l10n.t('Converting to PDF…'), 0.02);
-    input = await convertToBytes(filePath, token, (message, fraction) => report(message, 0.02 + fraction * 0.48));
+    input = await convertToBytes(filePath, token, (message, fraction) => report(message, 0.02 + fraction * 0.48), htmlMargin);
   }
   if (token.isCancellationRequested) throw new CancelledError();
   const base = ext === '.pdf' ? 0.05 : 0.5;

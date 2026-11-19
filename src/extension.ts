@@ -9,6 +9,7 @@ import { isDarkColor, resolvePageTheme, resolveTheme } from './themes';
 import { resolvePageDimensions } from './paper';
 import { inlineImages, loadAsDataUrl } from './images';
 import { inlineHtmlResources } from './htmlsource';
+import { HtmlMargin, applyHtmlMargin, isHtmlFile, pickHtmlMargin } from './htmlmargin';
 import { permissionFlags } from './note';
 import { registerNoteCommands } from './notes';
 import { Mark, MARK_HEIGHT, markLabel, markPath, pickMark } from './marks';
@@ -267,21 +268,30 @@ export function activate(context: vscode.ExtensionContext): void {
         if (teacher && mark === undefined) {
           return; // prompt dismissed
         }
+        // Asked once for the selection, and only when it has an .html file.
+        const htmlMargin = filePaths.some(isHtmlFile) ? await pickHtmlMargin() : undefined;
+        if (filePaths.some(isHtmlFile) && htmlMargin === undefined) {
+          return; // prompt dismissed
+        }
         const password = withPassword ? await resolvePassword() : undefined;
         if (withPassword && password === undefined) {
           return; // prompt dismissed
         }
-        await convertFilesToPdf(context, filePaths, password, mark);
+        await convertFilesToPdf(context, filePaths, password, mark, htmlMargin);
       })
     );
   }
 
-  registerNoteCommands(context, outputChannel, async (filePath, token, onProgress) => {
-    const settings = {
-      ...readSettings(vscode.workspace.getConfiguration('notepdf')),
-      headerText: '',
-      footerText: '',
-    };
+  registerNoteCommands(context, outputChannel, async (filePath, token, onProgress, htmlMargin) => {
+    const settings = applyHtmlMargin(
+      {
+        ...readSettings(vscode.workspace.getConfiguration('notepdf')),
+        headerText: '',
+        footerText: '',
+      },
+      filePath,
+      htmlMargin
+    );
     const baseName = path.basename(filePath).replace(/\.(ipynb|md|html)$/i, '');
     const vars = { file: baseName, name: baseName, date: localDate() };
     const { buffer } = await producePdf(context, filePath, settings, vars, undefined, undefined, token, onProgress);
@@ -375,7 +385,8 @@ async function convertFilesToPdf(
   context: vscode.ExtensionContext,
   filePaths: string[],
   password?: string,
-  mark?: Mark
+  mark?: Mark,
+  htmlMargin?: HtmlMargin
 ): Promise<void> {
   const settings = readSettings(vscode.workspace.getConfiguration('notepdf'));
   const batch = filePaths.length > 1;
@@ -393,7 +404,8 @@ async function convertFilesToPdf(
     // The notification carries a progress bar and a cancel button; stages add up to 100.
     const result = await vscode.window.withProgress(
       { location: vscode.ProgressLocation.Notification, title: `Converting ${fileName} to PDF${counter}`, cancellable: true },
-      (progress, token) => runConversion(context, filePath, password, mark, settings, vars, progress, token, !batch)
+      (progress, token) =>
+        runConversion(context, filePath, password, mark, applyHtmlMargin(settings, filePath, htmlMargin), vars, progress, token, !batch)
     );
     results.push(result);
     if (result === 'cancelled') {
@@ -1110,7 +1122,10 @@ ${config.frame === undefined ? `<div id="capture-root">${bodyHtml}</div>` : ''}
       const left = part.align === 'left' ? x : part.align === 'center' ? x - w / 2 : x - w;
       runs.push({ t: text, x: left / scale, y: (y - px * 0.6) / scale, w: w / scale, h: (px * 1.2) / scale, fs: cfg.runningFontPx });
     };
-    if (markImg) {
+    if (markImg && M <= 4 * scale) {
+      // No margin band to draw the mark in (an .html file converted without
+      // a page margin): left out, like the header and footer text.
+    } else if (markImg) {
       // Right-aligned to the content edge, centred in the top margin band and
       // shrunk if the band is too thin; it takes the header's place.
       let h = cfg.mark.height * scale;

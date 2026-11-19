@@ -32,7 +32,7 @@
   "config.pdfPageSize.enum.6": "Legal (8.5 × 14 in)",
   "config.pdfPageSize.enum.7": "와이드스크린 16:9 슬라이드 (13.333 × 7.5 in, nb_convert.py 가로 모드; 가로 방향과 함께 사용)",
   "config.pdfPageOrientation.description": "용지 방향.",
-  "config.pdfPageMargin.description": "네 변의 페이지 여백 (CSS px, 48 px = 0.5 in = nb_convert.py의 @page 여백). Markdown Reader 테마는 그 안쪽에 본문 여백을 더합니다 (좌우 7 px는 모든 페이지, 위아래 30 px는 첫/마지막 페이지).",
+  "config.pdfPageMargin.description": "네 변의 페이지 여백 (CSS px, 48 px = 0.5 in = nb_convert.py의 @page 여백). Markdown Reader 테마는 그 안쪽에 본문 여백을 더합니다 (좌우 7 px는 모든 페이지, 위아래 30 px는 첫/마지막 페이지). .html 파일은 변환할 때 이 값을 쓸지 여백 없음(0)으로 할지 묻습니다.",
   "config.outputDirectory.description": "PDF와 노트 PDF 저장 위치. 비우면 원본 파일 옆. 상대 경로는 원본 파일 폴더 기준(예: \"pdf\"), 절대 경로도 가능. 없으면 만듭니다.",
   "config.outputFileName.description": "확장자를 뺀 PDF 파일명. 자리표시자: {name}(원본 파일명, 확장자 제외), {date}(YYYY-MM-DD).",
   "config.openAfterConvert.description": "작업이 끝나면 시스템 뷰어로 PDF(또는 노트 PDF)를 엽니다.",

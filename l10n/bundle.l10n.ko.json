@@ -44,5 +44,10 @@
   ", {0} failed": ", {0}개 실패",
   ", {0} skipped after cancel": ", 취소로 {0}개 건너뜀",
   ", {0} with warnings": ", {0}개 경고",
-  "Select the instructor mark to draw in the header": "머릿말에 넣을 강사 마크를 선택하세요"
+  "Select the instructor mark to draw in the header": "머릿말에 넣을 강사 마크를 선택하세요",
+  "HTML page margin": "HTML 페이지 여백",
+  "Select the page margin for .html files": ".html 파일에 적용할 페이지 여백을 선택하세요",
+  "No margin (0 px)": "여백 없음 (0 px)",
+  "Only the margins the document itself has": "문서 자체의 여백만 사용",
+  "Margin from settings ({0} px)": "설정대로 ({0} px)"
 }

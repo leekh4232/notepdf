@@ -32,7 +32,7 @@
   "config.pdfPageSize.enum.6": "Legal (8.5 × 14 in)",
   "config.pdfPageSize.enum.7": "Widescreen 16:9 slide (13.333 × 7.5 in, nb_convert.py horizontal mode; use with landscape orientation)",
   "config.pdfPageOrientation.description": "Page orientation.",
-  "config.pdfPageMargin.description": "Page margin on all four sides, in CSS pixels (48 px = 0.5 in, nb_convert.py's @page margin). The Markdown Reader page themes add a body margin inside it: 7 px on both sides of every page, and 30 px above/below the document on the first/last page.",
+  "config.pdfPageMargin.description": "Page margin on all four sides, in CSS pixels (48 px = 0.5 in, nb_convert.py's @page margin). The Markdown Reader page themes add a body margin inside it: 7 px on both sides of every page, and 30 px above/below the document on the first/last page. An .html file asks at conversion time whether to use this value or no margin (0).",
   "config.outputDirectory.description": "Where the PDF and the note PDF are written. Empty = next to the source file. A relative path is resolved from the source file's folder (e.g. \"pdf\"); absolute paths work too. Created if missing.",
   "config.outputFileName.description": "PDF file name without extension. Placeholders: {name} (source file name without extension), {date} (YYYY-MM-DD).",
   "config.openAfterConvert.description": "Open the PDF (or note PDF) in the system viewer when it is done.",
