@@ -88,7 +88,7 @@ ext install leekh.ipynb-pdf-converter
 |:--|:--|
 | 적용하지 않는 것 | `pdfTheme` · `codeTheme` · `baseFontSize` · `bodyFontFamily` · `codeFontFamily` · `tableNowrap` · `showLineNumbers` · `coverPage` · `watermarkImage` |
 | 적용하는 것 | 용지 크기 · 방향 · 여백, 머릿말 · 꼬릿말, `pageBreakBefore`, 텍스트 층, 제목 개요, 비밀번호, 강사 마크, `imageFormat` · `deviceScaleFactor` |
-| 페이지 여백 | 변환할 때 팝업에서 고름. **여백 없음 (0 px)** 은 문서 자체의 여백만 쓰고, **설정대로**는 `pdfPageMargin`을 더함. 문서가 스스로 여백을 가졌으면 **여백 없음**을 골라야 여백이 겹치지 않음. 함께 선택한 `.ipynb` · `.md`에는 언제나 `pdfPageMargin`을 씀 |
+| 페이지 여백 | 변환할 때 팝업에서 고름. **여백 없음 (0 px)** 은 문서 자체의 여백만 쓰고, **설정대로**는 `pdfPageMargin`을 더함. 문서가 인쇄할 때도 스스로 여백을 가지면 **여백 없음**을 골라야 여백이 겹치지 않음. 함께 선택한 `.ipynb` · `.md`에는 언제나 `pdfPageMargin`을 씀 |
 | 여백 없음일 때 | 머릿말 · 꼬릿말 · 강사 마크를 넣지 않음(넣을 여백 띠가 없음). **필기 영역 추가**의 머릿말 · 꼬릿말 · 강사 마크는 그대로 나옴 |
 | 화면 폭 | 용지 폭에서 좌우 여백을 뺀 값(A4 세로 · 여백 48이면 698 px, 여백 없음이면 794 px). 문서의 미디어 쿼리와 `vw` · `vh`가 이 크기를 기준으로 계산됨 |
 | 여백 색 | 문서의 `body`(없으면 `html`) 배경색. 지정하지 않았으면 흰색 |
@@ -96,6 +96,7 @@ ext install leekh.ipynb-pdf-converter
 | 원격 자원 | http(s) CSS · 스크립트 · 글꼴 · 이미지는 `allowRemoteImages`가 켜져 있을 때만 불러옴 |
 | 스크립트 | 문서의 스크립트를 실행하고, 로드가 끝난 뒤 0.5초 기다렸다가 캡처 |
 | 색 구성 | `prefers-color-scheme`은 VS Code 색 테마와 상관없이 항상 밝은 쪽 |
+| 미디어 종류 | 인쇄 기준. `@media print` 규칙은 적용하고 `@media screen` 규칙은 적용하지 않음. 브라우저에서 볼 때만 쓰는 여백을 `@media screen` 안에 두면 PDF에는 들어가지 않음 |
 
 `.md`의 `---`로 감싼 머리글(YAML front matter)은 PDF에 넣지 않습니다. 맨 위 머리글(예: `theme` · `title` · `layout`)과 Slidev 슬라이드마다 붙는 `layout: two-cols` 같은 블록이 모두 빠지고, 코드 블록 안의 예시는 그대로 남습니다.
 

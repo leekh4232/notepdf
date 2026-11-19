@@ -4,6 +4,11 @@
 
 형식은 [Keep a Changelog](https://keepachangelog.com/ko/1.1.0/)를, 버전은 [유의적 버전](https://semver.org/lang/ko/)을 따릅니다.
 
+## [0.17.1] - 2026-11-19
+
+### 변경
+- **`.html`을 인쇄 기준으로 변환합니다.** 문서의 `@media print` 규칙은 적용하고 `@media screen` 규칙은 적용하지 않습니다(`not screen`, `screen and (...)`, `<link media="...">`도 같은 기준). 브라우저에서 볼 때만 쓰는 여백을 `@media screen` 안에 둔 문서는 그 여백이 PDF에 들어가지 않으므로, **설정대로**를 고르면 모든 쪽의 네 방향에 `pdfPageMargin`만 들어갑니다.
+
 ## [0.17.0] - 2026-11-19
 
 ### 추가

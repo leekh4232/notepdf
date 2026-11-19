@@ -14,6 +14,7 @@ const LINK_TAG = /<link\b[^>]*>/gi;
 const SCRIPT_SRC = /<script\b([^>]*?)\bsrc\s*=\s*(["'])(.*?)\2([^>]*)>\s*<\/script\s*>/gi;
 const CSS_IMPORT = /@import\s+(?:url\(\s*(["']?)(.*?)\1\s*\)|(["'])(.*?)\3)([^;]*);/gi;
 const CSS_URL = /url\(\s*(["']?)(.*?)\1\s*\)/gi;
+const MEDIA_RULE = /@media\b([^{};]*)\{/gi;
 const MAX_IMPORT_DEPTH = 3;
 
 interface Context {
@@ -40,7 +41,7 @@ export async function inlineHtmlResources(html: string, baseDir: string, options
       const url = new URL(href, base);
       const css = await inlineCss(await readText(url, ctx), url, ctx, 0);
       const media = attr(m[0], 'media');
-      return `<style${media ? ` media="${media}"` : ''}>${css.replace(/<\/style/gi, '<\\/style')}</style>`;
+      return `<style${media ? ` media="${asPrintMedia(media)}"` : ''}>${css.replace(/<\/style/gi, '<\\/style')}</style>`;
     } catch (error) {
       ctx.failures.push(describe(href, error));
       return m[0];
@@ -97,7 +98,18 @@ async function inlineCss(css: string, base: URL, ctx: Context, depth: number): P
   // PDF is paper, so the document always gets its light styles, as in print.
   return out
     .replace(/\(\s*prefers-color-scheme\s*:\s*dark\s*\)/gi, '(max-width: 0px)')
-    .replace(/\(\s*prefers-color-scheme\s*:\s*light\s*\)/gi, '(min-width: 0px)');
+    .replace(/\(\s*prefers-color-scheme\s*:\s*light\s*\)/gi, '(min-width: 0px)')
+    .replace(MEDIA_RULE, (_m, query: string) => `@media${asPrintMedia(query)}{`);
+}
+
+// The webview is a screen, but the capture becomes paper: `print` rules apply
+// and `screen` rules do not, so a margin the document keeps for the browser
+// only (@media screen) stays out of the PDF. Written so that `not screen` and
+// `screen and (...)` still mean what they say.
+function asPrintMedia(query: string): string {
+  return query.replace(/\b(screen|print)\b/gi, (type) =>
+    type.toLowerCase() === 'print' ? 'all' : 'all and (max-width: 0px)'
+  );
 }
 
 async function readText(url: URL, ctx: Context): Promise<string> {
