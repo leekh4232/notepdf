@@ -9,7 +9,6 @@ import { isDarkColor, resolvePageTheme, resolveTheme } from './themes';
 import { resolvePageDimensions } from './paper';
 import { inlineImages, loadAsDataUrl } from './images';
 import { inlineHtmlResources } from './htmlsource';
-import { HtmlMargin, applyHtmlMargin, isHtmlFile, pickHtmlMargin } from './htmlmargin';
 import { permissionFlags } from './note';
 import { registerNoteCommands } from './notes';
 import { Mark, MARK_HEIGHT, markLabel, markPath, pickMark } from './marks';
@@ -268,30 +267,21 @@ export function activate(context: vscode.ExtensionContext): void {
         if (teacher && mark === undefined) {
           return; // prompt dismissed
         }
-        // Asked once for the selection, and only when it has an .html file.
-        const htmlMargin = filePaths.some(isHtmlFile) ? await pickHtmlMargin() : undefined;
-        if (filePaths.some(isHtmlFile) && htmlMargin === undefined) {
-          return; // prompt dismissed
-        }
         const password = withPassword ? await resolvePassword() : undefined;
         if (withPassword && password === undefined) {
           return; // prompt dismissed
         }
-        await convertFilesToPdf(context, filePaths, password, mark, htmlMargin);
+        await convertFilesToPdf(context, filePaths, password, mark);
       })
     );
   }
 
-  registerNoteCommands(context, outputChannel, async (filePath, token, onProgress, htmlMargin) => {
-    const settings = applyHtmlMargin(
-      {
-        ...readSettings(vscode.workspace.getConfiguration('notepdf')),
-        headerText: '',
-        footerText: '',
-      },
-      filePath,
-      htmlMargin
-    );
+  registerNoteCommands(context, outputChannel, async (filePath, token, onProgress) => {
+    const settings = {
+      ...readSettings(vscode.workspace.getConfiguration('notepdf')),
+      headerText: '',
+      footerText: '',
+    };
     const baseName = path.basename(filePath).replace(/\.(ipynb|md|html)$/i, '');
     const vars = { file: baseName, name: baseName, date: localDate() };
     const { buffer } = await producePdf(context, filePath, settings, vars, undefined, undefined, token, onProgress);
@@ -385,8 +375,7 @@ async function convertFilesToPdf(
   context: vscode.ExtensionContext,
   filePaths: string[],
   password?: string,
-  mark?: Mark,
-  htmlMargin?: HtmlMargin
+  mark?: Mark
 ): Promise<void> {
   const settings = readSettings(vscode.workspace.getConfiguration('notepdf'));
   const batch = filePaths.length > 1;
@@ -404,8 +393,7 @@ async function convertFilesToPdf(
     // The notification carries a progress bar and a cancel button; stages add up to 100.
     const result = await vscode.window.withProgress(
       { location: vscode.ProgressLocation.Notification, title: `Converting ${fileName} to PDF${counter}`, cancellable: true },
-      (progress, token) =>
-        runConversion(context, filePath, password, mark, applyHtmlMargin(settings, filePath, htmlMargin), vars, progress, token, !batch)
+      (progress, token) => runConversion(context, filePath, password, mark, settings, vars, progress, token, !batch)
     );
     results.push(result);
     if (result === 'cancelled') {
@@ -1122,10 +1110,7 @@ ${config.frame === undefined ? `<div id="capture-root">${bodyHtml}</div>` : ''}
       const left = part.align === 'left' ? x : part.align === 'center' ? x - w / 2 : x - w;
       runs.push({ t: text, x: left / scale, y: (y - px * 0.6) / scale, w: w / scale, h: (px * 1.2) / scale, fs: cfg.runningFontPx });
     };
-    if (markImg && M <= 4 * scale) {
-      // No margin band to draw the mark in (an .html file converted without
-      // a page margin): left out, like the header and footer text.
-    } else if (markImg) {
+    if (markImg) {
       // Right-aligned to the content edge, centred in the top margin band and
       // shrunk if the band is too thin; it takes the header's place.
       let h = cfg.mark.height * scale;
@@ -1440,6 +1425,58 @@ ${config.frame === undefined ? `<div id="capture-root">${bodyHtml}</div>` : ''}
       Array.from(root.querySelectorAll('img')).map((img) => (img.decode ? img.decode().catch(() => undefined) : undefined))
     );
   }
+  // html2canvas paints the background and border of an inline element as one
+  // box around all of its lines, which covers the text beside it when the
+  // element wraps (inline code at a line end). Such an element is split into
+  // one piece per line, with the inner edges left open as the browser draws them.
+  function splitWrappedInlines(root) {
+    const doc = root.ownerDocument;
+    const view = doc.defaultView;
+    const range = doc.createRange();
+    const painted = (style) =>
+      (style.backgroundColor !== 'transparent' && style.backgroundColor !== 'rgba(0, 0, 0, 0)') ||
+      style.backgroundImage !== 'none' ||
+      ['Top', 'Right', 'Bottom', 'Left'].some((side) => style['border' + side + 'Style'] !== 'none' && parseFloat(style['border' + side + 'Width']) > 0);
+    const wrapped = Array.from(root.querySelectorAll('*')).filter((el) => {
+      if (el.children.length > 0 || el.getClientRects().length < 2) return false;
+      const style = view.getComputedStyle(el);
+      return style.display === 'inline' && painted(style);
+    });
+    for (const el of wrapped) {
+      el.normalize();
+      const node = el.firstChild;
+      if (!node || node.nodeType !== 3 || el.childNodes.length !== 1) continue;
+      // Offsets where a new line starts.
+      const starts = [0];
+      let line = null;
+      for (let i = 0; i < node.length; i++) {
+        range.setStart(node, i);
+        range.setEnd(node, i + 1);
+        const r = range.getClientRects()[0];
+        if (!r || r.width === 0) continue; // collapsed white space
+        if (line && r.top >= line.bottom - 1) starts.push(i);
+        if (!line || r.top >= line.bottom - 1) line = r;
+      }
+      if (starts.length < 2) continue;
+      const text = node.data;
+      const pieces = starts.map((start, i) => {
+        const piece = el.cloneNode(false);
+        piece.textContent = text.slice(start, starts[i + 1]);
+        const open = (side, corners) => {
+          for (const prop of ['margin-' + side, 'padding-' + side, 'border-' + side + '-width'].concat(corners)) {
+            piece.style.setProperty(prop, '0', 'important');
+          }
+        };
+        if (i > 0) {
+          piece.removeAttribute('id');
+          open('left', ['border-top-left-radius', 'border-bottom-left-radius']);
+        }
+        if (i < starts.length - 1) open('right', ['border-top-right-radius', 'border-bottom-right-radius']);
+        return piece;
+      });
+      el.replaceWith(...pieces);
+    }
+  }
   // Wait for fonts and images before capturing; settleMs more lets a framed
   // document's scripts finish drawing.
   function start(target, settleMs) {
@@ -1454,6 +1491,8 @@ ${config.frame === undefined ? `<div id="capture-root">${bodyHtml}</div>` : ''}
       .then(() => new Promise((r) => setTimeout(r, settleMs)))
       .then(() => rasterizeSvgs(target))
       .catch(() => undefined)
+      .then(() => splitWrappedInlines(target))
+      .catch(() => undefined)
       .then(() => requestAnimationFrame(() => requestAnimationFrame(() => capture(target))));
   }
   if (cfg.frame === undefined) {
@@ -1461,6 +1500,9 @@ ${config.frame === undefined ? `<div id="capture-root">${bodyHtml}</div>` : ''}
   } else {
     const frame = document.createElement('iframe');
     frame.id = 'capture-frame';
+    // A scrollbar in the frame would narrow the document and cut the capture
+    // short on the right by its width.
+    frame.scrolling = 'no';
     frame.addEventListener('load', () => start(frame.contentDocument.documentElement, 500));
     frame.srcdoc = cfg.frame;
     document.body.appendChild(frame);

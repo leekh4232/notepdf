@@ -63,12 +63,11 @@ ext install leekh.ipynb-pdf-converter
    | … (비밀번호) | … (with Password) | 설정의 기본 비밀번호로 암호화. 비어 있으면 팝업으로 입력. 여러 파일이면 한 번만 묻고 모든 PDF에 같은 비밀번호를 씀 |
    | … (강사 마크) · … (강사 마크, 비밀번호) | … (Teacher) · … (Teacher, with Password) | `teacherMode`를 켜면 추가. 팝업에서 통합 · 호쌤 · 쭈쌤 중 하나를 골라 그 강사 마크를 모든 페이지 우측 상단에 넣음 |
 
-3. 선택한 파일에 `.html`이 있으면 팝업에서 **여백 없음 (0 px)** 과 **설정대로**(`pdfPageMargin`) 중 하나를 고릅니다. 여러 파일이면 한 번만 묻습니다.
-4. 같은 폴더에 `.pdf`가 생깁니다. 같은 이름이 있으면 `이름 (1).pdf`, `이름 (2).pdf`처럼 번호를 붙이고 덮어쓰지 않습니다.
+3. 같은 폴더에 `.pdf`가 생깁니다. 같은 이름이 있으면 `이름 (1).pdf`, `이름 (2).pdf`처럼 번호를 붙이고 덮어쓰지 않습니다.
 
 ### 필기 영역 추가
 
-`.pdf` · `.ipynb` · `.md` · `.html`을 우클릭하고 **필기 영역 추가**(Add Note Area) 메뉴에서 고릅니다. `.ipynb` · `.md` · `.html`은 메모리에서 먼저 PDF로 바꾼 뒤 붙이므로 임시 파일이 남지 않습니다. `.html`이 있으면 변환과 똑같이 페이지 여백을 묻습니다. 원본의 글자는 그대로 남아 복사 · 검색이 됩니다.
+`.pdf` · `.ipynb` · `.md` · `.html`을 우클릭하고 **필기 영역 추가**(Add Note Area) 메뉴에서 고릅니다. `.ipynb` · `.md` · `.html`은 메모리에서 먼저 PDF로 바꾼 뒤 붙이므로 임시 파일이 남지 않습니다. 원본의 글자는 그대로 남아 복사 · 검색이 됩니다.
 
 | 한국어 UI | English UI | 하는 일 |
 |:--|:--|:--|
@@ -88,9 +87,7 @@ ext install leekh.ipynb-pdf-converter
 |:--|:--|
 | 적용하지 않는 것 | `pdfTheme` · `codeTheme` · `baseFontSize` · `bodyFontFamily` · `codeFontFamily` · `tableNowrap` · `showLineNumbers` · `coverPage` · `watermarkImage` |
 | 적용하는 것 | 용지 크기 · 방향 · 여백, 머릿말 · 꼬릿말, `pageBreakBefore`, 텍스트 층, 제목 개요, 비밀번호, 강사 마크, `imageFormat` · `deviceScaleFactor` |
-| 페이지 여백 | 변환할 때 팝업에서 고름. **여백 없음 (0 px)** 은 문서 자체의 여백만 쓰고, **설정대로**는 `pdfPageMargin`을 더함. 문서가 인쇄할 때도 스스로 여백을 가지면 **여백 없음**을 골라야 여백이 겹치지 않음. 함께 선택한 `.ipynb` · `.md`에는 언제나 `pdfPageMargin`을 씀 |
-| 여백 없음일 때 | 머릿말 · 꼬릿말 · 강사 마크를 넣지 않음(넣을 여백 띠가 없음). **필기 영역 추가**의 머릿말 · 꼬릿말 · 강사 마크는 그대로 나옴 |
-| 화면 폭 | 용지 폭에서 좌우 여백을 뺀 값(A4 세로 · 여백 48이면 698 px, 여백 없음이면 794 px). 문서의 미디어 쿼리와 `vw` · `vh`가 이 크기를 기준으로 계산됨 |
+| 화면 폭 | 용지 폭에서 좌우 여백을 뺀 값(A4 세로 · 여백 48이면 698 px). 문서의 미디어 쿼리와 `vw` · `vh`가 이 크기를 기준으로 계산됨 |
 | 여백 색 | 문서의 `body`(없으면 `html`) 배경색. 지정하지 않았으면 흰색 |
 | 연결된 파일 | CSS 파일(`@import`, 배경 그림, 글꼴 포함) · 스크립트 파일 · 이미지를 문서에 넣어 변환. 찾지 못한 파일은 경고 |
 | 원격 자원 | http(s) CSS · 스크립트 · 글꼴 · 이미지는 `allowRemoteImages`가 켜져 있을 때만 불러옴 |
@@ -136,7 +133,7 @@ ext install leekh.ipynb-pdf-converter
 | `codeTheme` | `mdr-dark` | `nb_convert.py --code-theme dark`와 동일. `mdr-light` · `dracula` · `github` · `github-dark` · `atom-one-light` · `atom-one-dark` · `monokai` · `nord` · `vs2015` · `leekh`(`default` 테마에서 제목·표·출력까지 A4 인쇄 스타일로) |
 | `pdfPageSize` | `A4` | `A3` · `A5` · `B4`(JIS 257×364 mm) · `B5`(JIS 182×257 mm) · `Letter` · `Legal` · `Widescreen`(16:9 슬라이드, 가로 방향과 함께) · 태블릿 `iPadPro13` · `iPadPro11` · `iPadAir13` · `iPad11`(iPad/iPad Air 11") · `iPadMini` · `GalaxyTabS11`(11") · `GalaxyTabS11Ultra`(S11 Ultra/S12 Ultra). 태블릿은 화면의 논리 크기(CSS px, 예: Galaxy Tab S11 = 800×1280)라 100%에서 화면에 꽉 참 |
 | `pdfPageOrientation` | `portrait` | `landscape` |
-| `pdfPageMargin` | `48` | 페이지 여백(CSS px, 48 = 0.5 in). `light` · `dark`는 그 안쪽에 본문 여백을 더함(좌우 7 px는 모든 페이지, 위아래 30 px는 문서 처음·끝). `.html`은 변환할 때 이 값 대신 여백 없음(0)을 고를 수 있음 |
+| `pdfPageMargin` | `48` | 페이지 여백(CSS px, 48 = 0.5 in). `light` · `dark`는 그 안쪽에 본문 여백을 더함(좌우 7 px는 모든 페이지, 위아래 30 px는 문서 처음·끝) |
 
 </details>
 
