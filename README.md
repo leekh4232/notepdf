@@ -95,6 +95,23 @@ ext install leekh.ipynb-pdf-converter
 | 색 구성 | `prefers-color-scheme`은 VS Code 색 테마와 상관없이 항상 밝은 쪽 |
 | 미디어 종류 | 인쇄 기준. `@media print` 규칙은 적용하고 `@media screen` 규칙은 적용하지 않음. 브라우저에서 볼 때만 쓰는 여백을 `@media screen` 안에 두면 PDF에는 들어가지 않음 |
 
+### 링크로 변환
+
+스크립트나 AI 에이전트처럼 VS Code 밖에서 변환을 시작할 때는 링크를 엽니다. VS Code 창이 열려 있어야 합니다.
+
+```sh
+open "vscode://leekh.ipynb-pdf-converter/convert?file=/절대/경로/문서.md"          # macOS
+start "" "vscode://leekh.ipynb-pdf-converter/convert?file=C:/절대/경로/문서.md"     # Windows
+```
+
+| 쿼리 | 하는 일 |
+|:--|:--|
+| `file` | 변환할 파일의 절대 경로. 여러 번 쓰면 차례로 변환. 경로의 한글 · 공백은 URL 인코딩 |
+| `password=<비밀번호>` | 그 비밀번호로 암호화. 값 없이 `password`만 쓰면 **(비밀번호)** 명령과 같이 `pdfPassword`를 쓰고, 비어 있으면 팝업으로 입력. 비밀번호의 특수문자는 URL 인코딩 |
+| `mark` | `all`(통합) · `hossam`(호쌤) · `jussam`(쭈쌤). **(강사 마크)** 명령처럼 그 강사 마크를 넣음. `teacherMode`와 상관없음 |
+
+외부 웹 페이지도 이 링크를 열 수 있으므로, VS Code에 열린 작업 폴더 안의 `.ipynb` · `.md` · `.html`만 변환하고 그 밖의 경로는 오류 알림을 띄웁니다. 결과 파일 이름은 우클릭 변환과 같습니다.
+
 `.md`의 `---`로 감싼 머리글(YAML front matter)은 PDF에 넣지 않습니다. 맨 위 머리글(예: `theme` · `title` · `layout`)과 Slidev 슬라이드마다 붙는 `layout: two-cols` 같은 블록이 모두 빠지고, 코드 블록 안의 예시는 그대로 남습니다.
 
 설치 뒤 VS Code의 확장 자동 업데이트(`extensions.autoUpdate`)가 꺼져 있으면 처음 한 번 켤지 묻습니다. **Turn on auto-update**를 누르면 사용자 설정이 켜지고, **Not now**를 누르면 다시 묻지 않습니다.

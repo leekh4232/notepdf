@@ -14,6 +14,11 @@ const MARKS: { mark: Mark; label: string; description: string }[] = [
   { mark: 'jussam', label: '쭈쌤', description: '주영아 강사' },
 ];
 
+// Accepts a mark id or its label; undefined for anything else.
+export function parseMark(value: string): Mark | undefined {
+  return MARKS.find((m) => m.mark === value || m.label === value)?.mark;
+}
+
 export function markLabel(mark: Mark): string {
   return MARKS.find((m) => m.mark === mark)?.label ?? mark;
 }

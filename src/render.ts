@@ -1,5 +1,6 @@
 import { marked } from 'marked';
 import hljs from 'highlight.js';
+import markdownLanguage from 'highlight.js/lib/languages/markdown';
 import {
   Cell,
   CellOutput,
@@ -329,7 +330,91 @@ function renderMime(data: MimeBundle): string {
   return '';
 }
 
+// highlight.js's Markdown grammar opens emphasis on any "_" (so "my_var" turns
+// everything up to the next "_", lines later, into one grey run) and lets
+// emphasis cross lines. Follow CommonMark instead: "_" / "__" must not touch a
+// word on the outside, and every delimiter must close on the same line.
+const WORD_BEFORE = '(?<![A-Za-z0-9_\\u00C0-\\uFFFF])';
+const WORD_AFTER = '(?![A-Za-z0-9_\\u00C0-\\uFFFF])';
+const EMPHASIS_BEGIN: Record<string, RegExp> = {
+  [/_(?![_\s])/.source]: new RegExp(`${WORD_BEFORE}_(?![_\\s])(?=[^_\\n]*[^_\\s]_${WORD_AFTER})`),
+  [/_{2}(?!\s)/.source]: new RegExp(`${WORD_BEFORE}__(?!\\s)(?=[^\\n]*?\\S__${WORD_AFTER})`),
+  [/\*(?![*\s])/.source]: /\*(?![*\s])(?=[^*\n]*[^*\s]\*)/,
+  [/\*{2}(?!\s)/.source]: /\*\*(?!\s)(?=[^\n]*?\S\*\*)/,
+};
+
+hljs.registerLanguage('markdown', (api) => {
+  const language = markdownLanguage(api);
+  const seen = new Set<object>();
+  const visit = (mode: unknown): void => {
+    if (!mode || typeof mode !== 'object' || seen.has(mode)) {
+      return;
+    }
+    seen.add(mode);
+    const m = mode as { begin?: unknown; contains?: unknown[]; variants?: unknown[] };
+    if (m.begin instanceof RegExp && EMPHASIS_BEGIN[m.begin.source]) {
+      m.begin = EMPHASIS_BEGIN[m.begin.source];
+    }
+    (m.variants ?? []).forEach(visit);
+    (m.contains ?? []).forEach(visit);
+  };
+  visit(language);
+  return language;
+});
+
+const FENCE_OPEN = /^ {0,3}(`{3,}|~{3,})([^`\n]*)$/;
+
+// Markdown source with fenced blocks inside (a prompt that quotes Python, say).
+// highlight.js paints such a block as one flat "code" run, so split the fences
+// out and colour each body in its own language; the text between them gets the
+// Markdown grammar. An unclosed fence runs to the end, as in CommonMark.
+function highlightMarkdown(source: string): string {
+  const lines = source.split('\n');
+  const out: string[] = [];
+  let text: string[] = [];
+  const flushText = (): void => {
+    if (text.length > 0) {
+      out.push(hljs.highlight(text.join('\n'), { language: 'markdown', ignoreIllegals: true }).value);
+      text = [];
+    }
+  };
+  for (let i = 0; i < lines.length; i++) {
+    const open = FENCE_OPEN.exec(lines[i]);
+    if (!open) {
+      text.push(lines[i]);
+      continue;
+    }
+    flushText();
+    const marker = open[1];
+    const close = new RegExp(`^ {0,3}${marker[0] === '`' ? '`' : '~'}{${marker.length},}[ \\t]*$`);
+    let end = i + 1;
+    while (end < lines.length && !close.test(lines[end])) {
+      end++;
+    }
+    const body = lines.slice(i + 1, end).join('\n');
+    const lang = open[2].trim().split(/\s+/)[0].toLowerCase();
+    const parts = [`<span class="hljs-code">${escapeHtml(lines[i])}</span>`];
+    if (end > i + 1) {
+      parts.push(highlightCode(body, lang));
+    }
+    if (end < lines.length) {
+      parts.push(`<span class="hljs-code">${escapeHtml(lines[end])}</span>`);
+    }
+    out.push(parts.join('\n'));
+    i = end;
+  }
+  flushText();
+  return out.join('\n');
+}
+
 function highlightCode(source: string, language: string): string {
+  if (hljs.getLanguage(language)?.name === 'Markdown') {
+    try {
+      return highlightMarkdown(source);
+    } catch {
+      // fall through to the stock grammar
+    }
+  }
   if (hljs.getLanguage(language)) {
     try {
       return hljs.highlight(source, { language, ignoreIllegals: true }).value;

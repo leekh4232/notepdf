@@ -32,7 +32,8 @@
     "password"
   ],
   "activationEvents": [
-    "onStartupFinished"
+    "onStartupFinished",
+    "onUri"
   ],
   "main": "./out/extension.js",
   "l10n": "./l10n",

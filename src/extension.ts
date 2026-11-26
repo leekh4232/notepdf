@@ -11,7 +11,7 @@ import { inlineImages, loadAsDataUrl } from './images';
 import { inlineHtmlResources } from './htmlsource';
 import { permissionFlags } from './note';
 import { registerNoteCommands } from './notes';
-import { Mark, MARK_HEIGHT, markLabel, markPath, pickMark } from './marks';
+import { Mark, MARK_HEIGHT, markLabel, markPath, parseMark, pickMark } from './marks';
 
 let outputChannel: vscode.OutputChannel;
 
@@ -288,8 +288,52 @@ export function activate(context: vscode.ExtensionContext): void {
     return buffer;
   });
 
+  context.subscriptions.push(vscode.window.registerUriHandler({ handleUri: (uri) => handleConvertUri(context, uri) }));
+
   void migrateSettings(context);
   void offerAutoUpdate(context);
+}
+
+// vscode://leekh.ipynb-pdf-converter/convert?file=/abs/a.md[&file=…][&password[=…]][&mark=all]
+// lets scripts and agents start a conversion from outside VS Code. Any web page
+// can open such a link, so only files inside an open workspace folder qualify.
+async function handleConvertUri(context: vscode.ExtensionContext, uri: vscode.Uri): Promise<void> {
+  if (uri.path !== '/convert') {
+    vscode.window.showErrorMessage(`NotePDF: unknown link ${uri.path}`);
+    return;
+  }
+  const query = new URLSearchParams(uri.query);
+  const folders = (vscode.workspace.workspaceFolders ?? []).map((f) => f.uri.fsPath);
+  const inWorkspace = (p: string): boolean =>
+    folders.some((root) => {
+      const rel = path.relative(root, p);
+      return rel !== '' && !rel.startsWith('..') && !path.isAbsolute(rel);
+    });
+  const requested = query.getAll('file').map((p) => path.resolve(p));
+  const rejected = requested.filter((p) => !isSupported(p) || !inWorkspace(p));
+  if (requested.length === 0 || rejected.length > 0) {
+    vscode.window.showErrorMessage(
+      requested.length === 0
+        ? 'NotePDF: the link names no file'
+        : `NotePDF: not a .ipynb, .md or .html file in an open workspace folder: ${rejected.join(', ')}`
+    );
+    return;
+  }
+  // mark: all | hossam | jussam, or the labels 통합 | 호쌤 | 쭈쌤.
+  const markParam = query.get('mark');
+  const mark = markParam === null ? undefined : parseMark(markParam);
+  if (markParam !== null && mark === undefined) {
+    vscode.window.showErrorMessage(`NotePDF: unknown mark ${markParam} (use all, hossam or jussam)`);
+    return;
+  }
+  // password=<value> encrypts with that value; a bare "password" (empty value)
+  // behaves like the (with Password) command: pdfPassword, else a prompt.
+  const passwordParam = query.get('password');
+  const password = passwordParam === null ? undefined : passwordParam || (await resolvePassword());
+  if (passwordParam !== null && password === undefined) {
+    return; // prompt dismissed
+  }
+  await convertFilesToPdf(context, requested, password, mark);
 }
 
 // Settings were named ipynb-pdf-converter.* up to 0.12.x. Move any value the
